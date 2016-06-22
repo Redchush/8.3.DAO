@@ -43,8 +43,8 @@ public class PostDaoMySql extends AbstractDaoMySql<Post>
     }
 
     @Override
-    public boolean create(Post entity)  {
-        return false;
+    public boolean create(Post entity) throws DaoException {
+        return super.create(entity);
     }
 
     @Override

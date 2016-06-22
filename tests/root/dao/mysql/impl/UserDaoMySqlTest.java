@@ -21,7 +21,8 @@ import static org.junit.Assert.assertEquals;
 
 
 public class UserDaoMySqlTest {
-    private static User userTested;
+    private static User userTestedWithBan;
+    private static User userTestedWithoutBan;
     private static Connection connection;
     private static AbstractDao dao;
 
@@ -42,18 +43,17 @@ public class UserDaoMySqlTest {
 
         Timestamp createdDate = new Timestamp(cal.getTimeInMillis());
         Timestamp udatedDate = null;
-        boolean isBanned = true;
-        userTested = new User(id, role, login, password, email, lastName,
-                firstName, createdDate, udatedDate, isBanned);
+        boolean isBanned = false;
+        userTestedWithBan = new User(id, role, login, password, email, lastName,
+                firstName, createdDate, udatedDate, true);
+        userTestedWithoutBan = new User(id, role, login, password, email, lastName,
+                firstName, createdDate, udatedDate, false);
     }
-
-    public UserDaoMySqlTest() throws ConnectionPoolException, DaoException {}
-
     @Test
     public void findAllTest() throws ConnectionPoolException, DaoException, SQLException {
         List<User> users = dao.findAll();
         User user = users.get(0);
-        assertEquals(userTested, user);
+        assertEquals(userTestedWithoutBan, user);
     }
 
     @Test
@@ -67,17 +67,22 @@ public class UserDaoMySqlTest {
     @Test
     public void deleteByUserTest() {
         // delete.userByBan
-        int id = userTested.getId();
+        int id = userTestedWithoutBan.getId();
     }
 
     @Test
-    public boolean create(User entity) {
-        return false;
-    }
+    public void create() { }
 
     @Test
-    public User update(User entity) {
-        return null;
+    public void update() throws DaoException {
+        List<User> users = dao.findAll();
+        User user = users.get(0);
+        assertEquals(userTestedWithoutBan, user);
+        user.setFirstName("a");
+        System.out.println(user.getEmail());
+        dao.update(user);
+        User userActual = (User) dao.findAll().get(0);
+        assertEquals(user,  userActual);
     }
 
     @AfterClass

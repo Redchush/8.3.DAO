@@ -42,13 +42,13 @@ public class TagDaoMySql extends AbstractDaoMySql<Tag>
     }
 
     @Override
-    public boolean create(Tag entity) {
-        return false;
+    public boolean create(Tag entity) throws DaoException {
+        return super.create(entity);
     }
 
     @Override
-    public Tag update(Tag entity) {
-        return null;
+    public Tag update(Tag entity) throws DaoException {
+        return super.update(entity);
     }
 
     @Override

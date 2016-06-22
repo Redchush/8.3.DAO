@@ -41,8 +41,8 @@ public class UserDaoMySql extends AbstractDaoMySql<User>
      }
 
     @Override
-    public boolean create(User entity) {
-        return false;
+    public boolean create(User entity) throws DaoException {
+        return super.create(entity);
     }
 
     @Override
@@ -82,6 +82,7 @@ public class UserDaoMySql extends AbstractDaoMySql<User>
         statement.setString(1, login);
         String password = entity.getPassword();
         statement.setString(2, password);
+
         String email = entity.getEmail();
         statement.setString(3, email);
 
@@ -89,7 +90,7 @@ public class UserDaoMySql extends AbstractDaoMySql<User>
         statement.setInt(4, role_id);
 
         String lastName = entity.getLastName();
-        statement.setString(3, lastName);
+        statement.setString(5, lastName);
 
         boolean isBanned = entity.isBanned();
         statement.setBoolean(6, isBanned);
@@ -102,6 +103,7 @@ public class UserDaoMySql extends AbstractDaoMySql<User>
 
         Timestamp updated_date = entity.getUpdatedDate();
         statement.setTimestamp(9, updated_date);
+
     }
 }
 //users.num = 10

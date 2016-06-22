@@ -6,9 +6,7 @@ import root.model.Entity;
 import java.sql.Connection;
 import java.util.List;
 
-/**
- * Created by user on 21.06.2016.
- */
+
 public interface AbstractDao<T extends Entity> {
 
     List<T> findAll() throws DaoException;

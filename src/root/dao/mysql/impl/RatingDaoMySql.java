@@ -42,8 +42,8 @@ public class RatingDaoMySql extends AbstractDaoMySql<Rating>
     }
 
     @Override
-    public boolean create(Rating entity) {
-        return false;
+    public boolean create(Rating entity) throws DaoException {
+        return super.create(entity);
     }
 
     @Override

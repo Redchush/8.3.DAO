@@ -246,11 +246,12 @@ public class User extends Entity {
 	@Override
 	public String toString() {
 		return "User{" +
-				"role=" + role +
-				", login='" + login + '\'' +
+				"id= " + super.getId() +
+			    ", login='" + login + '\'' +
 				", password='" + password + '\'' +
 				", email='" + email + '\'' +
 				", lastName='" + lastName + '\'' +
+				", role=" + role + '\''+
 				", firstName='" + firstName + '\'' +
 				", createdDate='" + createdDate + '\'' +
 				", updatedDate='" + updatedDate + '\'' +

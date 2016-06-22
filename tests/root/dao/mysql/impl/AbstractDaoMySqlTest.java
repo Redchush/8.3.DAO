@@ -17,6 +17,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 public class AbstractDaoMySqlTest {
@@ -24,11 +25,13 @@ public class AbstractDaoMySqlTest {
     private static User userTested;
     private static Connection connection;
     private static AbstractDao dao;
+    private static AbstractDaoTestedProtected daoTestedProtected;
 
     @BeforeClass
     public static void login() throws ConnectionPoolException, DaoException {
         connection = ConnectionPool.getInstanse().takeConnection();
         dao =  MySqlDaoFactory.getInstance().getDaoByClass(User.class, connection);
+        daoTestedProtected = new AbstractDaoTestedProtected(connection);
         int id = 1;
         String login = "lara";
         String password = "m23kujj";
@@ -117,6 +120,31 @@ public class AbstractDaoMySqlTest {
     @Test
     public void close2() throws Exception {
 
+    }
+    @Test
+    public void fillLastParameterWithId() throws SQLException {
+        String querty = " UPDATE id, login, password, email, role_id, last_name, banned, first_name, created_date, " +
+                "updated_date  SET " +
+                "id = DEFAULT,  login = ?,  password = ?,  email = ?,  role_id = ?,  last_name = ?,  banned = ?,  " +
+                "first_name = ?,  created_date = ?,  updated_date  = ?  where id = ? ";
+        PreparedStatement statement = connection.prepareStatement(querty);
+        daoTestedProtected.fillLastParameterWithId(statement, userTested);
+        assertTrue(statement.toString().contains("where id = 1"));
+     }
+
+    @Test
+    public void fillStatementWithFullAttributesSet() throws SQLException {
+        String querty = " UPDATE id, login, password, email, role_id, last_name, banned, first_name, created_date, " +
+                "updated_date  SET " +
+                "id = DEFAULT,  login = ?,  password = ?,  email = ?,  role_id = ?,  last_name = ?,  banned = ?,  " +
+                "first_name = ?,  created_date = ?,  updated_date  = ?  where id = ? ";
+        PreparedStatement statement = connection.prepareStatement(querty);
+        daoTestedProtected.fillLastParameterWithId(statement, userTested);
+        System.out.println(statement);
+        assertTrue(statement.toString().contains("where id = 1"));
+        String email = userTested.getEmail();
+        statement.setString(3, email);
+        System.out.println(querty);
     }
 
     @AfterClass

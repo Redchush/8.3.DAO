@@ -15,8 +15,7 @@ import java.util.List;
 public class CommentDaoMySql extends AbstractDaoMySql<Comment>
         implements CommentDao,Bannable {
 
-    public CommentDaoMySql() {
-    }
+    public CommentDaoMySql() {}
 
     public CommentDaoMySql(Connection connection) {
         super(connection);
@@ -43,8 +42,8 @@ public class CommentDaoMySql extends AbstractDaoMySql<Comment>
     }
 
     @Override
-    public boolean create(Comment entity) {
-        return false;
+    public boolean create(Comment entity) throws DaoException {
+        return super.create(entity);
     }
 
     @Override

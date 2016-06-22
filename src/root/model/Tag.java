@@ -48,7 +48,7 @@ public class Tag extends Entity{
     @Override
     public String toString() {
         return "Tag{" + super.getId() +
-                " name='" + name + '\'' +
+                ", name='" + name + '\'' +
                 '}';
     }
 }

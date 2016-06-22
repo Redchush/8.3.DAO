@@ -44,8 +44,8 @@ public class RoleDaoMySql extends AbstractDaoMySql<Role>
     }
 
     @Override
-    public boolean create(Role entity) {
-        return false;
+    public boolean create(Role entity) throws DaoException {
+        return super.create(entity);
     }
 
     @Override

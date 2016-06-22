@@ -39,7 +39,9 @@ public abstract class AbstractDaoMySql<T extends Entity> implements AbstractDao<
             set = statement.executeQuery();
             return createEntityList(set);
         } catch (SQLException e) {
-            throw new DaoException("Can't execute findAll by" + query);
+            throw new DaoException("Can't execute findAll with dao "
+                    + this.getClass() + "  by query " + query
+                    + "\nwith filled statement: \n" + statement, e);
         } finally {
             close(set);
             close(statement);
@@ -57,7 +59,9 @@ public abstract class AbstractDaoMySql<T extends Entity> implements AbstractDao<
             set = statement.executeQuery();
             return createSimpleEntity(set);
         } catch (SQLException e) {
-            throw new DaoException("Can't execute findEntityById " + query);
+            throw new DaoException("Can't execute findEntityById by initial query: \n" + query
+                    + "\nwith filled statement: \n" + statement +
+                    "\nand entity id: " + id, e);
         } finally {
             close(set);
             close(statement);
@@ -75,10 +79,12 @@ public abstract class AbstractDaoMySql<T extends Entity> implements AbstractDao<
         try {
             statement = connection.prepareStatement(query);
             statement.setInt(1, id);
-            statement.executeUpdate();
-            return true;
+            int state = statement.executeUpdate();
+            return state == 0;
         } catch (SQLException e) {
-            throw new DaoException("Can't execute delete entity by " + query);
+            throw new DaoException("Can't execute update by initial query: \n" + query
+                    + "with filled statement: \n" + statement +
+                    "\n and entity id: " + id, e);
         } finally {
             close(set);
             close(statement);
@@ -94,23 +100,40 @@ public abstract class AbstractDaoMySql<T extends Entity> implements AbstractDao<
     @Override
     public T update(T entity) throws DaoException{
         String query = QueryMaker.getUpdate(this);
-        ResultSet set = null;
         PreparedStatement statement = null;
         try {
             statement = connection.prepareStatement(query);
             fillStatementWithFullAttributesSet(statement, entity, 1);
             fillLastParameterWithId(statement, entity);
-            set = statement.executeQuery();
+            int state = statement.executeUpdate();
+            return entity;
         } catch (SQLException e) {
-            throw new DaoException("Can't execute update by query " + query + " and entitry " + entity);
+            throw new DaoException("Can't execute update by initial query: \n" + query
+                    + "with filled statement: \n" + statement +
+                    " and entity \n " + entity, e);
         } finally {
             close(statement);
         }
-        return entity;
     }
 
     @Override
-    public abstract boolean create(T entity) throws DaoException;
+    public boolean create(T entity) throws DaoException{
+        String query = QueryMaker.getCreate(this);
+        PreparedStatement statement = null;
+        try {
+            statement = connection.prepareStatement(query);
+            fillStatementWithFullAttributesSet(statement, entity, 1);
+            fillLastParameterWithId(statement, entity);
+            int state = statement.executeUpdate();
+            return state == 0;
+        } catch (SQLException e) {
+            throw new DaoException("Can't execute create by initial query: \n" + query
+                    + "with filled statement: \n" + statement +
+                    " and entity \n " + entity, e);
+        } finally {
+            close(statement);
+        }
+    }
 
     @Override
     public void close(Connection connection) throws DaoException {
@@ -127,7 +150,8 @@ public abstract class AbstractDaoMySql<T extends Entity> implements AbstractDao<
         List<T> entities =  createEntityList(set);
         T entity = null;
         if (entities.size() == 1) {
-            entity = createEntityList(set).get(0);
+            entity = entities.get(0);
+            System.out.println(entity);
         }
         return entity;
     }
@@ -163,8 +187,4 @@ public abstract class AbstractDaoMySql<T extends Entity> implements AbstractDao<
 
     protected abstract void fillStatementWithFullAttributesSet(PreparedStatement statement, T entity, int from)
             throws SQLException;
-
-
-
-
 }

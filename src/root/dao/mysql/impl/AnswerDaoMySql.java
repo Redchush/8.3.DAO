@@ -22,7 +22,7 @@ public class AnswerDaoMySql extends AbstractDaoMySql<Answer> implements AnswerDa
 
     @Override
     public List<Answer> findAll() throws DaoException {
-        return super.findAll();
+        return  super.findAll();
     }
 
     @Override
@@ -42,7 +42,7 @@ public class AnswerDaoMySql extends AbstractDaoMySql<Answer> implements AnswerDa
 
     @Override
     public boolean create(Answer entity) throws DaoException {
-        return false;
+        return super.create(entity);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class AnswerDaoMySql extends AbstractDaoMySql<Answer> implements AnswerDa
          return super.update(entity);
     }
 
-     /*
+        /*
      * use constructor public Answer(int id, User author, Post parent, String content, Timestamp createdDate,
      *                   Timestamp updatedDate, boolean banned)
      *  method is called by superclass method, which contain try - catch and rethrow the exceptions in
@@ -96,6 +96,7 @@ public class AnswerDaoMySql extends AbstractDaoMySql<Answer> implements AnswerDa
 
         boolean isBanned = entity.isBanned();
         statement.setBoolean(6, isBanned);
+
     }
 }
 

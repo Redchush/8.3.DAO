@@ -1,6 +1,7 @@
 package root.dao.mysql.util;
 
 
+import org.jetbrains.annotations.NotNull;
 import root.dao.AbstractDao;
 import root.model.Entity;
 
@@ -11,9 +12,10 @@ import static root.dao.mysql.util.ResourceManager.*;
 public class QueryMaker {
 
     private static final String SELECT = "SELECT ";
-    private static final String DELETE = "DELETE ";
+    private static final String DELETE = "DELETE FROM ";
     private static final String UPDATE = "UPDATE ";
-    private static final String CREATE = "CREATE ";
+    private static final String INSERT = "INSERT INTO ";
+    private static final String VALUES = "\nVALUES ";
     private static final String SET = "\nSET ";
     private static final String DEFAULT = "DEFAULT";
 
@@ -47,21 +49,38 @@ public class QueryMaker {
         return result.toString();
     }
 
-
+    @NotNull
     public static <T extends Entity> String getUpdate(AbstractDao<T> dao) {
         Class clazz = dao.getClass();
-
         String tableName = getReferencedTable(clazz, false);
+        String tableFullName = getReferencedTable(clazz, true);
         int attrCount = getAttrCount(tableName);
         String fieldsString = getAllFieldsString(tableName, attrCount);
-        String setPartOfQuery = getSetPartOfQuery(fieldsString);
+        String setPartOfQuery = getSetPartOfQuery(fieldsString, true);
 
         StringBuilder query = new StringBuilder(UPDATE);
-        query.append(fieldsString)
+        query.append(tableFullName)
              .append(SET)
              .append(setPartOfQuery)
              .append("\n")
              .append(PARTS.getString("append.byId"));
+        return query.toString();
+    }
+
+    @NotNull
+    public static <T extends Entity> String getCreate(AbstractDao<T> dao) {
+        Class clazz = dao.getClass();
+        String tableName = getReferencedTable(clazz, false);
+        String tableFullName = getReferencedTable(clazz, true);
+        int attrCount = getAttrCount(tableName);
+        String fieldsString = getAllFieldsString(tableName, attrCount);
+        String setPartOfQuery = getValuesPartOfQuery(attrCount, 1, true);
+        StringBuilder query = new StringBuilder(INSERT);
+        query.append(tableFullName)
+             .append(" ")
+             .append(surroundWithParenthesis(fieldsString))
+             .append(VALUES)
+             .append(setPartOfQuery);
         return query.toString();
     }
 
@@ -81,42 +100,41 @@ public class QueryMaker {
         return Integer.parseInt(columnCount);
     }
 
-    private static String getSetPartOfQuery(String fieldEnum){
+    private static String getValuesPartOfQuery(int fieldsCount, int exprCount, boolean isFirstDefault){
+        StringBuilder builder = new StringBuilder("(");
+        int counter = 0;
+        String insert = "?, ";
+        for (int i = 0; i < fieldsCount; i++) {
+             if ((isFirstDefault) && (i == 0)){
+                 builder.append(DEFAULT).append(", ");
+             }
+             builder.append(insert);
+        }
+        builder.replace(builder.length() - insert.length() - 2, builder.length(), ")");
+        return builder.toString();
+    }
+
+    private static String getSetPartOfQuery(String fieldEnum, boolean isFirstDefault){
         String replacement = " = ?, ";
         String lastReplacement = " = ?";
-        return fieldEnum.replaceAll(",", replacement)
-                        .replaceFirst("\\?" , DEFAULT)
-                                    + lastReplacement;
+        String result = fieldEnum.replaceAll(",", replacement);
+        return isFirstDefault ? result.replaceFirst("\\?" , DEFAULT) + lastReplacement
+                              : result + lastReplacement;
     }
 
     private static String getAllFieldsString(String tableName, int attrCount){
         StringBuilder result = new StringBuilder();
+        String appender = ", ";
         for (int i = OPT_START_COL_INDEX; i <= attrCount; i++) {
             String value = STRUCTURE.getString(tableName +"." + i);
-            result.append(value).append(", ");
+            result.append(value).append(appender);
         }
-        result.deleteCharAt(result.length() - 2);
+        result.delete(result.length() - appender.length(), result.length());
         return result.toString();
+
     }
 
-  /*  public static void main(String[] args) {
-        try {
-            AbstractDao<User> dao = new UserDaoMySql();
-            String query = getDeleteQueryById(dao);
-            System.out.println(query);
-        } finally {}
-        try {
-             AbstractDao<User> dao = new UserDaoMySql();
-             User user = new User();
-             String string = getUpdate(dao);
-            System.out.println(string);
-        } finally {}
-        try {
-            AbstractDao<Answer> dao = new AnswerDaoMySql();
-            Answer user = new Answer();
-            String string = getUpdate(dao);
-            System.out.println(string);
-        } finally {}
-    }*/
-
+    private static String surroundWithParenthesis(String s){
+        return "(" + s + ")";
+    }
 }

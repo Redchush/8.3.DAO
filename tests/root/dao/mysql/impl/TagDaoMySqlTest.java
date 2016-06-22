@@ -20,26 +20,42 @@ public class TagDaoMySqlTest {
     private static Tag tagTested;
     private static Connection connection;
     private static AbstractDao dao;
+    private static Tag tagToCreate;
+    private static int initialSizeOftable = 7;
 
     @BeforeClass
     public static void login() throws ConnectionPoolException, DaoException {
         connection = ConnectionPool.getInstanse().takeConnection();
         dao =  MySqlDaoFactory.getInstance().getDaoByClass(Tag.class, connection);
+
         tagTested = new Tag(1, "java");
+        tagToCreate = new Tag();
+        tagToCreate.setName("testedTag");
      }
 
-    public TagDaoMySqlTest() throws ConnectionPoolException, DaoException {}
+
 
     @Test
-    public void findAllTest() throws ConnectionPoolException, DaoException, SQLException {
-        List<Tag> tags = dao.findAll();
-        Tag tag = tags.get(0);
+    public void findEntityById() throws ConnectionPoolException, DaoException, SQLException {
+        Tag tag = (Tag) dao.findEntityById(1);
         assertEquals(tagTested, tag);
     }
 
     @Test
-    public static void deleteTestById() throws DaoException {
+    public void findAllTest() throws ConnectionPoolException, DaoException, SQLException {
+        List<Tag> tags = dao.findAll();
+        assertEquals(tags.size(), initialSizeOftable);
+    }
 
+
+    @Test
+    public void deleteTestById() throws DaoException {
+        int id = tagTested.getId();
+        boolean boo = dao.delete(id);
+        List<Tag> tags = dao.findAll();
+        assertEquals(tags.size(), initialSizeOftable - 1);
+        System.out.println(boo);
+        showTableState();
 
     }
 
@@ -49,8 +65,10 @@ public class TagDaoMySqlTest {
     }
 
     @Test
-    public void createTest() {
-        Tag entity;
+    public void createTest() throws DaoException {
+       showTableState();
+       dao.create(tagTested);
+       showTableState();
     }
 
     @Test
@@ -63,6 +81,10 @@ public class TagDaoMySqlTest {
     @AfterClass
     public static void logOut() throws SQLException {
         connection.close();
+    }
+    public void showTableState() throws DaoException {
+        List<Tag> tags = dao.findAll();
+        System.out.println(tags);
     }
 
 }

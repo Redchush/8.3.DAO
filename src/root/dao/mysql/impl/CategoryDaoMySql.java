@@ -42,7 +42,7 @@ public class CategoryDaoMySql extends AbstractDaoMySql<Category>
 
     @Override
     public boolean create(Category entity) throws DaoException {
-        return false;
+        return super.create(entity);
     }
 
     @Override

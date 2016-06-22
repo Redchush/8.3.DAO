@@ -44,7 +44,7 @@ public class FavoritePostDaoMySql extends AbstractDaoMySql<FavoritePost> impleme
 
     @Override
     public boolean create(FavoritePost entity) throws DaoException {
-        return false;
+        return super.create(entity);
     }
 
     @Override
