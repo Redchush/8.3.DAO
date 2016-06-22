@@ -5,10 +5,7 @@ import root.dao.exception.DaoException;
 import root.dao.mysql.Bannable;
 import root.model.*;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,11 +82,44 @@ public class CommentDaoMySql extends AbstractDaoMySql<Comment>
         }
         return entities;
     }
+
+    @Override
+    protected Comment updateDbRecord(Comment entity, String query) throws DaoException {
+        ResultSet set = null;
+        PreparedStatement statement = null;
+        try {
+            statement = connection.prepareStatement(query);
+
+            int answers_id = entity.getParent().getId();
+            statement.setInt(1, answers_id);
+            int user_id = entity.getAuthor().getId();
+            statement.setInt(2, user_id);
+
+            Timestamp created_date = entity.getCreatedDate();
+            statement.setTimestamp(3, created_date);
+            Timestamp updated_date = entity.getUpdatedDate();
+            statement.setTimestamp(4, updated_date);
+
+            String message = entity.getContent();
+            statement.setString(5, message);
+
+            boolean isBanned = entity.isBanned();
+            statement.setBoolean(6, isBanned);
+
+            set = statement.executeQuery();
+        } catch (SQLException e) {
+            throw new DaoException("Can't execute update by query " + query + " and entitry " + entity);
+        } finally {
+            close(statement);
+        }
+        return entity;
+    }
 }
-//        comments.num = 6
+//comments.num = 7
 //        comments.1 = id
-//        comments.2 = answers_id
-//        comments.3 = user_id
-//        comments.4 = created_date
-//        comments.5 = message
-//        comments.6 = banned
+//        comments.2 = answers_id -> 1
+//        comments.3 = user_id -> 2
+//        comments.4 = created_date ->3
+//        comments.5 = updated_date -> 4
+//        comments.6 = message ->5
+//        comments.7 = banned ->6

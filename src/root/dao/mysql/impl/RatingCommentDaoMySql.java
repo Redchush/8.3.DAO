@@ -3,15 +3,12 @@ package root.dao.mysql.impl;
 import root.dao.RatingCommentDao;
 import root.dao.exception.DaoException;
 import root.dao.mysql.Bannable;
-import root.model.Answer;
 import root.model.Rating;
 import root.model.RatingComment;
-import root.model.User;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 

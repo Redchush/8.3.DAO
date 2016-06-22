@@ -3,14 +3,10 @@ package root.dao.mysql.impl;
 import root.dao.CategoryDao;
 import root.dao.exception.DaoException;
 import root.dao.mysql.Bannable;
+import root.model.Answer;
 import root.model.Category;
-import root.model.Role;
-import root.model.User;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,8 +53,12 @@ public class CategoryDaoMySql extends AbstractDaoMySql<Category>
 
     @Override
     protected Category createSimpleEntity(ResultSet set) throws DaoException {
-        Category category = createEntityList(set).get(0);
-        return category;
+        List<Category> entities =  createEntityList(set);
+        Category entity = null;
+        if (entities.size() == 1) {
+            entity = createEntityList(set).get(0);
+        }
+        return entity;
     }
     /*
     *   use constuctor  public Category(int id, String title, String description,
@@ -87,4 +87,42 @@ public class CategoryDaoMySql extends AbstractDaoMySql<Category>
         }
         return entities;
     }
+
+    @Override
+    protected Category updateDbRecord(Category entity, String query) throws DaoException {
+        ResultSet set = null;
+        PreparedStatement statement = null;
+        try {
+            statement = connection.prepareStatement(query);
+
+            String title = entity.getTitle();
+            statement.setString(1, title);
+
+            Timestamp created_date = entity.getCreatedDate();
+            statement.setTimestamp(2, created_date);
+
+            String description = entity.getDescription();
+            statement.setString(3, description);
+
+            int categoryId = entity.getParent().getId();
+            statement.setInt(4, categoryId);
+
+            boolean published = entity.isPublished();
+            statement.setBoolean(5, published);
+
+            set = statement.executeQuery();
+        } catch (SQLException e) {
+            throw new DaoException("Can't execute update by query " + query + " and entitry " + entity);
+        } finally {
+            close(statement);
+        }
+        return entity;
+    }
 }
+//  categories.num = 6;
+//  categories.1 = id
+//  categories.2 = title - 1
+//  categories.3 = created_date - 2
+//  categories.4 = description - 3
+//  categories.5 = parent_category - 4
+//  categories.6 = published - 5

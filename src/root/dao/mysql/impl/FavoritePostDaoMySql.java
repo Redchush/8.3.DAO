@@ -1,23 +1,13 @@
 package root.dao.mysql.impl;
 
-import root.connection_pool.ConnectionPool;
-import root.connection_pool.exception.ConnectionPoolException;
-import root.dao.AbstractDao;
 import root.dao.FavoritePostDao;
 import root.dao.exception.DaoException;
-import root.dao.mysql.Bannable;
-import root.dao.mysql.util.QueryMaker;
 import root.model.FavoritePost;
 import root.model.Post;
-import root.model.Tag;
 import root.model.User;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -83,9 +73,32 @@ public class FavoritePostDaoMySql extends AbstractDaoMySql<FavoritePost> impleme
         }
         return entities;
     }
+    @Override
+    protected FavoritePost updateDbRecord(FavoritePost entity, String query) throws DaoException {
+        ResultSet set = null;
+        PreparedStatement statement = null;
+        try {
+            statement = connection.prepareStatement(query);
+
+            int user_id = entity.getAuthor().getId();
+            statement.setInt(1, user_id);
+            int post_id = entity.getRelatedPost().getId();
+            statement.setInt(2, post_id);
+            String comment = entity.getComment();
+            statement.setString(3, comment);
+
+            set = statement.executeQuery();
+        } catch (SQLException e) {
+            throw new DaoException("Can't execute update by query " + query + " and entitry " + entity);
+        } finally {
+            close(statement);
+        }
+        return entity;
+    }
+
 }
-//favorite_users_posts.num = 3
-//        favorite_users_posts.1 = user_id
+//favorite_users_posts.num = 4
+//        favorite_users_posts.1 = id
 //        favorite_users_posts.2 = user_id
 //        favorite_users_posts.3 = post_id
 //        favorite_users_posts.4 = comment

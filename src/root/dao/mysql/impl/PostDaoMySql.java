@@ -3,14 +3,12 @@ package root.dao.mysql.impl;
 import root.dao.PostDao;
 import root.dao.exception.DaoException;
 import root.dao.mysql.Bannable;
+import root.model.Answer;
 import root.model.Category;
 import root.model.Post;
 import root.model.User;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,4 +90,52 @@ public class PostDaoMySql extends AbstractDaoMySql<Post>
         }
         return entities;
     }
+
+    @Override
+    protected Post updateDbRecord(Post entity, String query) throws DaoException {
+        ResultSet set = null;
+        PreparedStatement statement = null;
+        try {
+            statement = connection.prepareStatement(query);
+
+
+            int user_id = entity.getAuthor().getId();
+            statement.setInt(1, user_id);
+
+            int category_id = entity.getParent().getId();
+            statement.setInt(2, category_id);
+
+            String title = entity.getTitle();
+            statement.setString(3, title);
+
+            String message = entity.getContent();
+            statement.setString(4, message);
+
+            boolean isBanned = entity.isBanned();
+            statement.setBoolean(5, isBanned);
+
+            Timestamp created_date = entity.getCreatedDate();
+            statement.setTimestamp(6, created_date);
+
+            Timestamp updated_date = entity.getUpdatedDate();
+            statement.setTimestamp(7, updated_date);
+
+            set = statement.executeQuery();
+        } catch (SQLException e) {
+            throw new DaoException("Can't execute update by query " + query + " and entitry " + entity);
+        } finally {
+            close(statement);
+        }
+        return entity;
+    }
 }
+
+//  posts.num = 8
+//  posts.1 = id
+//  posts.2 = user_id
+//  posts.3 = category_id
+//  posts.4 = title
+//  posts.5 = content
+//  posts.6 = banned
+//  posts.7 = created_date
+//  posts.8 = updated_date

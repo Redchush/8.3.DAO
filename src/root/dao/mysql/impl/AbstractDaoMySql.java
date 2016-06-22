@@ -96,7 +96,10 @@ public abstract class AbstractDaoMySql<T extends Entity> implements AbstractDao<
     public abstract boolean create(T entity) throws DaoException;
 
     @Override
-    public abstract T update(T entity) throws DaoException;
+    public T update(T entity) throws DaoException{
+        String query = QueryMaker.getUpdate(this);
+        return updateDbRecord(entity, query);
+    }
 
     @Override
     public void close(Connection connection) throws DaoException {
@@ -109,9 +112,18 @@ public abstract class AbstractDaoMySql<T extends Entity> implements AbstractDao<
         }
     }
 
-    protected abstract T createSimpleEntity(ResultSet set) throws DaoException;
+    protected T createSimpleEntity(ResultSet set) throws DaoException{
+        List<T> entities =  createEntityList(set);
+        T entity = null;
+        if (entities.size() == 1) {
+            entity = createEntityList(set).get(0);
+        }
+        return entity;
+    }
 
-    protected abstract List<T> createEntityList(ResultSet set) throws DaoException;
+    protected  abstract List<T> createEntityList(ResultSet set) throws DaoException;
+
+    protected  abstract T updateDbRecord(T entity, String query) throws DaoException;
 
     protected void close(Statement statement) throws DaoException {
         try {

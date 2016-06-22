@@ -4,7 +4,6 @@ package root.dao.mysql.impl;
 import root.dao.UserDao;
 import root.dao.exception.DaoException;
 import root.dao.mysql.Bannable;
-import root.dao.mysql.util.QueryMaker;
 import root.model.Role;
 import root.model.User;
 

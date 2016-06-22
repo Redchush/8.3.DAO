@@ -1,17 +1,15 @@
 package root.dao.mysql.impl;
 
+import root.dao.AbstractDao;
 import root.dao.AnswerDao;
 import root.dao.exception.DaoException;
 import root.dao.mysql.Bannable;
+import root.dao.mysql.util.QueryMaker;
 import root.model.Answer;
-import root.model.Comment;
 import root.model.Post;
 import root.model.User;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,13 +49,9 @@ public class AnswerDaoMySql extends AbstractDaoMySql<Answer> implements AnswerDa
 
     @Override
     public Answer update(Answer entity) throws DaoException {
-        return null;
+         return super.update(entity);
     }
 
-    @Override
-    protected Answer createSimpleEntity(ResultSet set) throws DaoException {
-        return null;
-    }
 
  /*    public Answer(int id, User author, Post parent, String content, Timestamp createdDate,
  *        Timestamp updatedDate, boolean banned)
@@ -87,15 +81,46 @@ public class AnswerDaoMySql extends AbstractDaoMySql<Answer> implements AnswerDa
             throw new DaoException("Cant create a category list ", e);
         }
         return entities;
+    }
 
+    @Override
+    protected Answer updateDbRecord(Answer entity, String query) throws DaoException {
+        ResultSet set = null;
+        PreparedStatement statement = null;
+        try {
+            statement = connection.prepareStatement(query);
 
+            int post_id = entity.getParent().getId();
+            statement.setInt(1, post_id);
+            int user_id = entity.getAuthor().getId();
+            statement.setInt(2, user_id);
+
+            String message = entity.getContent();
+            statement.setString(3, message);
+            Timestamp created_date = entity.getCreatedDate();
+            statement.setTimestamp(4, created_date);
+
+            Timestamp updated_date = entity.getUpdatedDate();
+            statement.setTimestamp(5, updated_date);
+
+            boolean isBanned = entity.isBanned();
+            statement.setBoolean(6, isBanned);
+
+            set = statement.executeQuery();
+        } catch (SQLException e) {
+            throw new DaoException("Can't execute update by query " + query + " and entitry " + entity);
+        } finally {
+            close(statement);
+        }
+        return entity;
     }
 }
 
-//        answers.1 = id
-//        answers.2 = post_id
-//        answers.3 = user_id
-//        answers.4 = message
-//        answers.5 = created_date
-//        answers.6 = updated_date
-//        answers.7 = banned
+//
+//         answers.1 = id
+//        answers.2 = post_id - >1
+//        answers.3 = user_id -> 2
+//        answers.4 = message -> 3
+//        answers.5 = created_date ->4
+//        answers.6 = updated_date -> 5
+//        answers.7 = banned - > 6
