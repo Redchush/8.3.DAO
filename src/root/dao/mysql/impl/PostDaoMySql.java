@@ -56,11 +56,9 @@ public class PostDaoMySql extends AbstractDaoMySql<Post>
     *            String content, Timestamp createdDate, Timestamp updatedDate, boolean banned)
     */
     @Override
-    protected List<Post> createEntityList(ResultSet set) throws DaoException {
+    protected List<Post> createEntityList(ResultSet set) throws SQLException {
         List<Post> entities = new ArrayList<>();
-        Post entity;
-        try {
-            while (set.next()) {
+        while (set.next()) {
                 int id = set.getInt(1);
                 int parentUserId = set.getInt("user_id");
                 User parentUser = new User(parentUserId);
@@ -74,50 +72,35 @@ public class PostDaoMySql extends AbstractDaoMySql<Post>
                 Timestamp updatedDate = set.getTimestamp("updated_date");
                 boolean isBanned = set.getBoolean("banned");
 
-                entity = new Post(id, parentUser, parentCategory, title, content, createdDate, updatedDate, isBanned);
+                Post entity = new Post(id, parentUser, parentCategory, title, content, createdDate, updatedDate, isBanned);
                 entities.add(entity);
-            }
-        } catch (SQLException e) {
-            throw new DaoException("Cant create a category list ", e);
         }
         return entities;
     }
 
     @Override
-    protected Post updateDbRecord(Post entity, String query) throws DaoException {
-        ResultSet set = null;
-        PreparedStatement statement = null;
-        try {
-            statement = connection.prepareStatement(query);
+    protected void fillStatementWithFullAttributesSet(PreparedStatement statement, Post entity, int from)
+            throws SQLException {
+        int user_id = entity.getAuthor().getId();
+        statement.setInt(1, user_id);
 
-            int user_id = entity.getAuthor().getId();
-            statement.setInt(1, user_id);
+        int category_id = entity.getParent().getId();
+        statement.setInt(2, category_id);
 
-            int category_id = entity.getParent().getId();
-            statement.setInt(2, category_id);
+        String title = entity.getTitle();
+        statement.setString(3, title);
 
-            String title = entity.getTitle();
-            statement.setString(3, title);
+        String message = entity.getContent();
+        statement.setString(4, message);
 
-            String message = entity.getContent();
-            statement.setString(4, message);
+        boolean isBanned = entity.isBanned();
+        statement.setBoolean(5, isBanned);
 
-            boolean isBanned = entity.isBanned();
-            statement.setBoolean(5, isBanned);
+        Timestamp created_date = entity.getCreatedDate();
+        statement.setTimestamp(6, created_date);
 
-            Timestamp created_date = entity.getCreatedDate();
-            statement.setTimestamp(6, created_date);
-
-            Timestamp updated_date = entity.getUpdatedDate();
-            statement.setTimestamp(7, updated_date);
-
-            set = statement.executeQuery();
-        } catch (SQLException e) {
-            throw new DaoException("Can't execute update by query " + query + " and entitry " + entity);
-        } finally {
-            close(statement);
-        }
-        return entity;
+        Timestamp updated_date = entity.getUpdatedDate();
+        statement.setTimestamp(7, updated_date);
     }
 }
 

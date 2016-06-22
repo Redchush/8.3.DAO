@@ -46,81 +46,62 @@ public class UserDaoMySql extends AbstractDaoMySql<User>
     }
 
     @Override
-    public User update(User entity) {
-
-        return null;
+    public User update(User entity) throws DaoException {
+        return super.update(entity);
     }
-
-
     /*
-    *   use constructor public User(int id, Role role, String login, String password, String email, String lastName,
-    *   String firstName, String createdDate, String udatedDate, boolean isBanned)
-    */
+        *   use constructor public User(int id, Role role, String login, String password, String email, String lastName,
+        *   String firstName, String createdDate, String udatedDate, boolean isBanned)
+     */
     @Override
-    protected List<User> createEntityList(ResultSet set) throws DaoException {
+    protected List<User> createEntityList(ResultSet set) throws SQLException {
         List<User> entities = new ArrayList<>();
-        User entity;
-        try {
-            while (set.next()) {
-                int id = set.getInt(1);
-                String login = set.getString("login");
-                String password = set.getString("password");
-                String email = set.getString("email");
-                Role role = new Role(set.getInt("role_id"));
-                String lastName = set.getString("last_name");
-                String firstName = set.getString("first_name");
-                Timestamp createdDate = set.getTimestamp("created_date");
-                Timestamp updatedDate = set.getTimestamp("updated_date");
-                boolean isBanned = set.getBoolean("banned");
-                entity = new User(id, role, login, password, email, lastName,
-                        firstName, createdDate, updatedDate, isBanned);
-                entities.add(entity);
-            }
-        } catch (SQLException e) {
-            throw new DaoException("Cant create a user list", e);
+        while (set.next()) {
+            int id = set.getInt(1);
+            String login = set.getString("login");
+            String password = set.getString("password");
+            String email = set.getString("email");
+            Role role = new Role(set.getInt("role_id"));
+            String lastName = set.getString("last_name");
+            String firstName = set.getString("first_name");
+            Timestamp createdDate = set.getTimestamp("created_date");
+            Timestamp updatedDate = set.getTimestamp("updated_date");
+            boolean isBanned = set.getBoolean("banned");
+            User entity = new User(id, role, login, password, email, lastName,
+                    firstName, createdDate, updatedDate, isBanned);
+            entities.add(entity);
         }
-      return entities;
+        return entities;
     }
 
     @Override
-    protected User updateDbRecord(User entity, String query) throws DaoException {
-        ResultSet set = null;
-        PreparedStatement statement = null;
-        try {
-            statement = connection.prepareStatement(query);
+    protected void fillStatementWithFullAttributesSet(PreparedStatement statement, User entity, int from)
+            throws SQLException {
 
-            String login = entity.getLogin();
-            statement.setString(1, login);
-            String password = entity.getPassword();
-            statement.setString(2, password);
-            String email = entity.getEmail();
-            statement.setString(3, email);
+        String login = entity.getLogin();
+        statement.setString(1, login);
+        String password = entity.getPassword();
+        statement.setString(2, password);
+        String email = entity.getEmail();
+        statement.setString(3, email);
 
-            int role_id = entity.getRole().getId();
-            statement.setInt(4, role_id);
+        int role_id = entity.getRole().getId();
+        statement.setInt(4, role_id);
 
-            String lastName = entity.getLastName();
-            statement.setString(3, lastName);
+        String lastName = entity.getLastName();
+        statement.setString(3, lastName);
 
-            boolean isBanned = entity.isBanned();
-            statement.setBoolean(6, isBanned);
+        boolean isBanned = entity.isBanned();
+        statement.setBoolean(6, isBanned);
 
-            String firstName = entity.getFirstName();
-            statement.setString(7, firstName);
+        String firstName = entity.getFirstName();
+        statement.setString(7, firstName);
 
-            Timestamp created_date = entity.getCreatedDate();
-            statement.setTimestamp(8, created_date);
+        Timestamp created_date = entity.getCreatedDate();
+        statement.setTimestamp(8, created_date);
 
-            Timestamp updated_date = entity.getUpdatedDate();
-            statement.setTimestamp(9, updated_date);
-
-            set = statement.executeQuery();
-        } catch (SQLException e) {
-            throw new DaoException("Can't execute update by query " + query + " and entitry " + entity);
-        } finally {
-            close(statement);
-        }
-        return entity;
+        Timestamp updated_date = entity.getUpdatedDate();
+        statement.setTimestamp(9, updated_date);
     }
 }
 //users.num = 10

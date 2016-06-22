@@ -56,63 +56,46 @@ public class RatingDaoMySql extends AbstractDaoMySql<Rating>
     *             Timestamp updatedDate, List<RatingComment> ratingComment, boolean isBanned)
     */
     @Override
-    protected List<Rating> createEntityList(ResultSet set) throws DaoException {
+    protected List<Rating> createEntityList(ResultSet set) throws SQLException {
         List<Rating> entities = new ArrayList<>();
-        Rating entity;
-        try {
-            while (set.next()) {
-                int id = set.getInt(1);
-                int parentAnswerId = set.getInt("answer_id");
-                Answer parentAnswer = new Answer(parentAnswerId);
+        while (set.next()) {
+            int id = set.getInt(1);
+            int parentAnswerId = set.getInt("answer_id");
+            Answer parentAnswer = new Answer(parentAnswerId);
 
-                int raiting = set.getInt("raiting");
-                int parentUserId = set.getInt("user_id");
-                User parentUser = new User(parentUserId);
+            int raiting = set.getInt("raiting");
+            int parentUserId = set.getInt("user_id");
+            User parentUser = new User(parentUserId);
 
-                Timestamp createdDate = set.getTimestamp("created_date");
-                Timestamp updated_date = set.getTimestamp("updated_date");
+            Timestamp createdDate = set.getTimestamp("created_date");
+            Timestamp updated_date = set.getTimestamp("updated_date");
 
-                boolean isBanned = set.getBoolean("banned");
+            boolean isBanned = set.getBoolean("banned");
 
-                entity = new Rating(id, parentAnswer, parentUser, raiting, createdDate, updated_date, isBanned);
-                entities.add(entity);
-            }
-        } catch (SQLException e) {
-            throw new DaoException("Cant create a category list ", e);
+            Rating entity = new Rating(id, parentAnswer, parentUser, raiting, createdDate, updated_date, isBanned);
+            entities.add(entity);
         }
         return entities;
     }
 
     @Override
-    protected Rating updateDbRecord(Rating entity, String query) throws DaoException {
-        ResultSet set = null;
-        PreparedStatement statement = null;
-        try {
-            statement = connection.prepareStatement(query);
+    protected void fillStatementWithFullAttributesSet(PreparedStatement statement, Rating entity, int from)
+            throws SQLException {
+        int answer_id = entity.getParent().getId();
+        statement.setInt(1, answer_id);
+        int user_id = entity.getAuthor().getId();
+        statement.setInt(2, user_id);
 
-            int answer_id = entity.getParent().getId();
-            statement.setInt(1, answer_id);
-            int user_id = entity.getAuthor().getId();
-            statement.setInt(2, user_id);
+        int rating = entity.getRating();
+        statement.setInt(4, rating);
 
-            int rating = entity.getRating();
-            statement.setInt(4, rating);
+        Timestamp created_date = entity.getCreatedDate();
+        statement.setTimestamp(4, created_date);
+        Timestamp updated_date = entity.getUpdatedDate();
+        statement.setTimestamp(5, updated_date);
 
-            Timestamp created_date = entity.getCreatedDate();
-            statement.setTimestamp(4, created_date);
-            Timestamp updated_date = entity.getUpdatedDate();
-            statement.setTimestamp(5, updated_date);
-
-            boolean isBanned = entity.isBanned();
-            statement.setBoolean(6, isBanned);
-
-            set = statement.executeQuery();
-        } catch (SQLException e) {
-            throw new DaoException("Can't execute update by query " + query + " and entitry " + entity);
-        } finally {
-            close(statement);
-        }
-        return entity;
+        boolean isBanned = entity.isBanned();
+        statement.setBoolean(6, isBanned);
     }
 }
 

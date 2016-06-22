@@ -55,56 +55,39 @@ public class RatingCommentDaoMySql extends AbstractDaoMySql<RatingComment>
     }
 
     @Override
-    protected List<RatingComment> createEntityList(ResultSet set) throws DaoException {
+    protected List<RatingComment> createEntityList(ResultSet set) throws SQLException {
         List<RatingComment> entities = new ArrayList<>();
-        RatingComment entity;
-        try {
-            while (set.next()) {
-                int id = set.getInt(1);
-                int ratingId = set.getInt("answers_rating_id");
-                Rating rating = new Rating(ratingId);
+        while (set.next()) {
+            int id = set.getInt(1);
+            int ratingId = set.getInt("answers_rating_id");
+            Rating rating = new Rating(ratingId);
 
-                String comment = set.getString("comment");
-                boolean isBanned = set.getBoolean("banned");
-                boolean isPositive = set.getBoolean("type");
+            String comment = set.getString("comment");
+            boolean isBanned = set.getBoolean("banned");
+            boolean isPositive = set.getBoolean("type");
 
-                entity = new RatingComment(id, rating, comment, isPositive, isBanned);
-                entities.add(entity);
-            }
-        } catch (SQLException e) {
-            throw new DaoException("Cant create a category list ", e);
+            RatingComment entity = new RatingComment(id, rating, comment, isPositive, isBanned);
+            entities.add(entity);
         }
         return entities;
     }
 
     @Override
-    protected RatingComment updateDbRecord(RatingComment entity, String query) throws DaoException {
-        ResultSet set = null;
-        PreparedStatement statement = null;
-        try {
-            statement = connection.prepareStatement(query);
+    protected void fillStatementWithFullAttributesSet(PreparedStatement statement, RatingComment entity, int from)
+            throws SQLException {
 
-            int answers_rating_id = entity.getParent().getId();
-            statement.setInt(1, answers_rating_id);
+        int answers_rating_id = entity.getParent().getId();
+        statement.setInt(1, answers_rating_id);
 
-            boolean type = entity.isPositive();
-            statement.setBoolean(2, type);
+        boolean type = entity.isPositive();
+        statement.setBoolean(2, type);
 
-            String comment = entity.getComment();
-            statement.setString(3, comment);
+        String comment = entity.getComment();
+        statement.setString(3, comment);
 
-            boolean idBanned = entity.isBanned();
-            statement.setBoolean(4, idBanned);
-
-            set = statement.executeQuery();
-        } catch (SQLException e) {
-            throw new DaoException("Can't execute update by query " + query + " and entitry " + entity);
-        } finally {
-            close(statement);
-        }
-        return entity;
+        boolean idBanned = entity.isBanned();
+        statement.setBoolean(4, idBanned);
     }
-
 }
 //answer_property.num =4
 //        answer_property.1 = id

@@ -53,62 +53,44 @@ public class CommentDaoMySql extends AbstractDaoMySql<Comment>
     }
 
     @Override
-    protected List<Comment> createEntityList(ResultSet set) throws DaoException {
+    protected List<Comment> createEntityList(ResultSet set) throws SQLException {
         List<Comment> entities = new ArrayList<>();
-        Comment entity;
-        try {
-            while (set.next()) {
-                int id = set.getInt(1);
-                int parentUserId = set.getInt("user_id");
-                User parentUser = new User(parentUserId);
+        while (set.next()) {
+            int id = set.getInt(1);
+            int parentUserId = set.getInt("user_id");
+            User parentUser = new User(parentUserId);
 
-                int parentPostId = set.getInt("post_id");
-                Answer parentAnswer = new Answer(parentPostId);
+            int parentPostId = set.getInt("post_id");
+            Answer parentAnswer = new Answer(parentPostId);
 
-                String content = set.getString("message");
-                Timestamp createdDate = set.getTimestamp("created_date");
-                Timestamp updatedDate = set.getTimestamp("updated_date");
-                boolean isBanned = set.getBoolean("banned");
+            String content = set.getString("message");
+            Timestamp createdDate = set.getTimestamp("created_date");
+            Timestamp updatedDate = set.getTimestamp("updated_date");
+            boolean isBanned = set.getBoolean("banned");
 
-                entity = new Comment(id, parentUser, parentAnswer, content, createdDate, updatedDate, isBanned);
-                entities.add(entity);
-            }
-        } catch (SQLException e) {
-            throw new DaoException("Cant create a comment list ", e);
+            Comment entity = new Comment(id, parentUser, parentAnswer, content, createdDate, updatedDate, isBanned);
+            entities.add(entity);
         }
         return entities;
     }
 
     @Override
-    protected Comment updateDbRecord(Comment entity, String query) throws DaoException {
-        ResultSet set = null;
-        PreparedStatement statement = null;
-        try {
-            statement = connection.prepareStatement(query);
+    protected void fillStatementWithFullAttributesSet(PreparedStatement statement, Comment entity, int from) throws
+                                                                                                    SQLException {
 
-            int answers_id = entity.getParent().getId();
-            statement.setInt(1, answers_id);
-            int user_id = entity.getAuthor().getId();
-            statement.setInt(2, user_id);
+        int answers_id = entity.getParent().getId();
+        statement.setInt(1, answers_id);
+        int user_id = entity.getAuthor().getId();
+        statement.setInt(2, user_id);
+        Timestamp created_date = entity.getCreatedDate();
+        statement.setTimestamp(3, created_date);
+        Timestamp updated_date = entity.getUpdatedDate();
+        statement.setTimestamp(4, updated_date);
+        String message = entity.getContent();
+        statement.setString(5, message);
+        boolean isBanned = entity.isBanned();
+        statement.setBoolean(6, isBanned);
 
-            Timestamp created_date = entity.getCreatedDate();
-            statement.setTimestamp(3, created_date);
-            Timestamp updated_date = entity.getUpdatedDate();
-            statement.setTimestamp(4, updated_date);
-
-            String message = entity.getContent();
-            statement.setString(5, message);
-
-            boolean isBanned = entity.isBanned();
-            statement.setBoolean(6, isBanned);
-
-            set = statement.executeQuery();
-        } catch (SQLException e) {
-            throw new DaoException("Can't execute update by query " + query + " and entitry " + entity);
-        } finally {
-            close(statement);
-        }
-        return entity;
     }
 }
 //comments.num = 7

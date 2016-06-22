@@ -54,37 +54,22 @@ public class RoleDaoMySql extends AbstractDaoMySql<Role>
     }
 
     @Override
-    protected List<Role> createEntityList(ResultSet set) throws DaoException {
+    protected List<Role> createEntityList(ResultSet set) throws SQLException {
         List<Role> entities = new ArrayList<>();
-        Role entity;
-        try {
-            while (set.next()) {
-                int id = set.getInt(1);
-                String name = set.getString("name");
-                entity = new Role(id, name);
-                entities.add(entity);
-            }
-        } catch (SQLException e) {
-            throw new DaoException("Cant create a tag list", e);
+        while (set.next()) {
+            int id = set.getInt(1);
+            String name = set.getString("name");
+            Role entity = new Role(id, name);
+            entities.add(entity);
         }
         return entities;
     }
 
     @Override
-    protected Role updateDbRecord(Role entity, String query) throws DaoException {
-        ResultSet set = null;
-        PreparedStatement statement = null;
-        try {
-            statement = connection.prepareStatement(query);
-            String name = entity.getName();
-            statement.setString(1, name);
-            set = statement.executeQuery();
-        } catch (SQLException e) {
-            throw new DaoException("Can't execute update by query " + query + " and entitry " + entity);
-        } finally {
-            close(statement);
-        }
-        return entity;
+    protected void fillStatementWithFullAttributesSet(PreparedStatement statement, Role entity, int from)
+            throws SQLException {
+        String name = entity.getName();
+        statement.setString(1, name);
     }
 }
 

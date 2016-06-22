@@ -50,64 +50,46 @@ public class CategoryDaoMySql extends AbstractDaoMySql<Category>
         return super.update(entity);
     }
 
-
     /*
     *   use constuctor  public Category(int id, String title, String description,
-    *                Timestamp createdDate, Category parent,
-    *                boolean published)
+    *                Timestamp createdDate, Category parent, boolean published)
     */
     @Override
-    protected List<Category> createEntityList(ResultSet set) throws DaoException {
+    protected List<Category> createEntityList(ResultSet set) throws SQLException {
         List<Category> entities = new ArrayList<>();
-        Category entity;
-        try {
-            while (set.next()) {
-                int id = set.getInt(1);
-                String title = set.getString("title");
-                Timestamp createdDate = set.getTimestamp("created_date");
-                String description = set.getString("description");
+        while (set.next()) {
+            int id = set.getInt(1);
+            String title = set.getString("title");
+            Timestamp createdDate = set.getTimestamp("created_date");
+            String description = set.getString("description");
 
-                int parentId = set.getInt("parent_category");
-                Category parent = new Category(parentId);
-                boolean isPublished = set.getBoolean("published");
-                entity = new Category(id, title, description, createdDate, parent, isPublished);
-                entities.add(entity);
-            }
-        } catch (SQLException e) {
-            throw new DaoException("Cant create a category list ", e);
+            int parentId = set.getInt("parent_category");
+            Category parent = new Category(parentId);
+            boolean isPublished = set.getBoolean("published");
+
+            Category entity = new Category(id, title, description, createdDate, parent, isPublished);
+            entities.add(entity);
         }
         return entities;
     }
 
     @Override
-    protected Category updateDbRecord(Category entity, String query) throws DaoException {
-        ResultSet set = null;
-        PreparedStatement statement = null;
-        try {
-            statement = connection.prepareStatement(query);
+    protected void fillStatementWithFullAttributesSet(PreparedStatement statement, Category entity, int from) throws
+                                                                                                     SQLException {
+        String title = entity.getTitle();
+        statement.setString(1, title);
 
-            String title = entity.getTitle();
-            statement.setString(1, title);
+        Timestamp created_date = entity.getCreatedDate();
+        statement.setTimestamp(2, created_date);
 
-            Timestamp created_date = entity.getCreatedDate();
-            statement.setTimestamp(2, created_date);
+        String description = entity.getDescription();
+        statement.setString(3, description);
 
-            String description = entity.getDescription();
-            statement.setString(3, description);
+        int categoryId = entity.getParent().getId();
+        statement.setInt(4, categoryId);
 
-            int categoryId = entity.getParent().getId();
-            statement.setInt(4, categoryId);
-
-            boolean published = entity.isPublished();
-            statement.setBoolean(5, published);
-
-            set = statement.executeQuery();
-        } catch (SQLException e) {
-            throw new DaoException("Can't execute update by query " + query + " and entitry " + entity);
-        } finally {
-            close(statement);
-        }
-        return entity;
+        boolean published = entity.isPublished();
+        statement.setBoolean(5, published);
     }
 }
 //  categories.num = 6;

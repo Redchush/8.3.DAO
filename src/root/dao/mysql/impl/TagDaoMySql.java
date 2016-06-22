@@ -52,36 +52,22 @@ public class TagDaoMySql extends AbstractDaoMySql<Tag>
     }
 
     @Override
-    protected List<Tag> createEntityList(ResultSet set) throws DaoException {
+    protected List<Tag> createEntityList(ResultSet set) throws SQLException {
         List<Tag> entities = new ArrayList<>();
-        Tag entity;
-        try {
-            while (set.next()) {
-                int id = set.getInt(1);
-                String name = set.getString("name");
-                entity = new Tag(id, name);
-                entities.add(entity);
-             }
-        } catch (SQLException e) {
-            throw new DaoException("Cant create a tag list", e);
+        while (set.next()) {
+            int id = set.getInt(1);
+            String name = set.getString("name");
+            Tag entity = new Tag(id, name);
+            entities.add(entity);
         }
         return entities;
     }
 
+
     @Override
-    protected Tag updateDbRecord(Tag entity, String query) throws DaoException {
-        ResultSet set = null;
-        PreparedStatement statement = null;
-        try {
-            statement = connection.prepareStatement(query);
-            String name = entity.getName();
-            statement.setString(1, name);
-            set = statement.executeQuery();
-        } catch (SQLException e) {
-            throw new DaoException("Can't execute update by query " + query + " and entitry " + entity);
-        } finally {
-            close(statement);
-        }
-        return entity;
+    protected void fillStatementWithFullAttributesSet(PreparedStatement statement, Tag entity, int from)
+            throws SQLException {
+        String name = entity.getName();
+        statement.setString(1, name);
     }
 }

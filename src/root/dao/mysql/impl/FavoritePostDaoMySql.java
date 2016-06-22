@@ -53,44 +53,28 @@ public class FavoritePostDaoMySql extends AbstractDaoMySql<FavoritePost> impleme
     }
 
     @Override
-    protected List<FavoritePost> createEntityList(ResultSet set) throws DaoException {
+    protected List<FavoritePost> createEntityList(ResultSet set) throws SQLException {
         List<FavoritePost> entities = new ArrayList<>();
-        FavoritePost entity;
-        try {
-            while (set.next()) {
-                int id = set.getInt("id");
-                int userId = set.getInt("user_id");
-                int postId = set.getInt("post_id");
-                String comment = set.getString("comment");
-                entity = new FavoritePost(id, new User(userId), new Post(postId), comment);
-                entities.add(entity);
-            }
-        } catch (SQLException e) {
-            throw new DaoException("Cant create a tag list", e);
+        while (set.next()) {
+            int id = set.getInt("id");
+            int userId = set.getInt("user_id");
+            int postId = set.getInt("post_id");
+            String comment = set.getString("comment");
+            FavoritePost entity = new FavoritePost(id, new User(userId), new Post(postId), comment);
+            entities.add(entity);
         }
         return entities;
     }
+
     @Override
-    protected FavoritePost updateDbRecord(FavoritePost entity, String query) throws DaoException {
-        ResultSet set = null;
-        PreparedStatement statement = null;
-        try {
-            statement = connection.prepareStatement(query);
-
-            int user_id = entity.getAuthor().getId();
-            statement.setInt(1, user_id);
-            int post_id = entity.getRelatedPost().getId();
-            statement.setInt(2, post_id);
-            String comment = entity.getComment();
-            statement.setString(3, comment);
-
-            set = statement.executeQuery();
-        } catch (SQLException e) {
-            throw new DaoException("Can't execute update by query " + query + " and entitry " + entity);
-        } finally {
-            close(statement);
-        }
-        return entity;
+    protected void fillStatementWithFullAttributesSet(PreparedStatement statement, FavoritePost entity, int from)
+            throws SQLException {
+        int user_id = entity.getAuthor().getId();
+        statement.setInt(1, user_id);
+        int post_id = entity.getRelatedPost().getId();
+        statement.setInt(2, post_id);
+        String comment = entity.getComment();
+        statement.setString(3, comment);
     }
 }
 //favorite_users_posts.num = 4
