@@ -6,7 +6,10 @@ import root.model.FavoritePost;
 import root.model.Post;
 import root.model.User;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,13 +49,7 @@ public class FavoritePostDaoMySql extends AbstractDaoMySql<FavoritePost> impleme
 
     @Override
     public FavoritePost update(FavoritePost entity) throws DaoException {
-        return null;
-    }
-
-    @Override
-    protected FavoritePost createSimpleEntity(ResultSet set) throws DaoException {
-         FavoritePost post = createEntityList(set).get(0);
-         return post;
+        return super.update(entity);
     }
 
     @Override
@@ -95,7 +92,6 @@ public class FavoritePostDaoMySql extends AbstractDaoMySql<FavoritePost> impleme
         }
         return entity;
     }
-
 }
 //favorite_users_posts.num = 4
 //        favorite_users_posts.1 = id

@@ -7,10 +7,7 @@ import root.model.Answer;
 import root.model.Rating;
 import root.model.User;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,15 +47,8 @@ public class RatingDaoMySql extends AbstractDaoMySql<Rating>
     }
 
     @Override
-    public Rating update(Rating entity) {
-        return null;
-    }
-
-
-    @Override
-    protected Rating createSimpleEntity(ResultSet set) throws DaoException {
-        Rating entity = createEntityList(set).get(0); ;
-        return entity;
+    public Rating update(Rating entity) throws DaoException {
+        return super.update(entity);
     }
 
     /*
@@ -92,5 +82,45 @@ public class RatingDaoMySql extends AbstractDaoMySql<Rating>
         }
         return entities;
     }
+
+    @Override
+    protected Rating updateDbRecord(Rating entity, String query) throws DaoException {
+        ResultSet set = null;
+        PreparedStatement statement = null;
+        try {
+            statement = connection.prepareStatement(query);
+
+            int answer_id = entity.getParent().getId();
+            statement.setInt(1, answer_id);
+            int user_id = entity.getAuthor().getId();
+            statement.setInt(2, user_id);
+
+            int rating = entity.getRating();
+            statement.setInt(4, rating);
+
+            Timestamp created_date = entity.getCreatedDate();
+            statement.setTimestamp(4, created_date);
+            Timestamp updated_date = entity.getUpdatedDate();
+            statement.setTimestamp(5, updated_date);
+
+            boolean isBanned = entity.isBanned();
+            statement.setBoolean(6, isBanned);
+
+            set = statement.executeQuery();
+        } catch (SQLException e) {
+            throw new DaoException("Can't execute update by query " + query + " and entitry " + entity);
+        } finally {
+            close(statement);
+        }
+        return entity;
+    }
 }
 
+//answer_rating.num = 7
+//        answer_rating.1 = id
+//        answer_rating.2 = answer_id
+//        answer_rating.3 = user_id
+//        answer_rating.4 = raiting
+//        answer_rating.5 = created_date
+//        answer_rating.6 = updated_date
+//        answer_rating.7 = banned

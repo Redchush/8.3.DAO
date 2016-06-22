@@ -85,7 +85,7 @@ public class AbstractDaoTest {
 
 
     private void findAll(AbstractDao dao) throws DaoException {
-        String query =  QueryMaker.getSelectQueryAll(dao.getClass());
+        String query =  QueryMaker.getSelectQueryAll(dao);
         System.out.println(query);
         ResultSet set;
         PreparedStatement statement;

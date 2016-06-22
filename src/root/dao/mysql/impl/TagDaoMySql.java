@@ -5,6 +5,7 @@ import root.dao.exception.DaoException;
 import root.model.Tag;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -51,12 +52,6 @@ public class TagDaoMySql extends AbstractDaoMySql<Tag>
     }
 
     @Override
-    protected Tag createSimpleEntity(ResultSet set) throws DaoException {
-        Tag tag =  createEntityList(set).get(0);
-        return tag;
-    }
-
-    @Override
     protected List<Tag> createEntityList(ResultSet set) throws DaoException {
         List<Tag> entities = new ArrayList<>();
         Tag entity;
@@ -71,5 +66,22 @@ public class TagDaoMySql extends AbstractDaoMySql<Tag>
             throw new DaoException("Cant create a tag list", e);
         }
         return entities;
+    }
+
+    @Override
+    protected Tag updateDbRecord(Tag entity, String query) throws DaoException {
+        ResultSet set = null;
+        PreparedStatement statement = null;
+        try {
+            statement = connection.prepareStatement(query);
+            String name = entity.getName();
+            statement.setString(1, name);
+            set = statement.executeQuery();
+        } catch (SQLException e) {
+            throw new DaoException("Can't execute update by query " + query + " and entitry " + entity);
+        } finally {
+            close(statement);
+        }
+        return entity;
     }
 }

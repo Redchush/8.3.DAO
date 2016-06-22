@@ -1,8 +1,6 @@
 package root.dao.mysql;
 
 
-import root.connection_pool.ConnectionPool;
-import root.connection_pool.exception.ConnectionPoolException;
 import root.dao.AbstractDao;
 import root.dao.exception.DaoException;
 import root.dao.mysql.impl.*;
@@ -10,7 +8,6 @@ import root.model.*;
 
 import java.sql.Connection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class MySqlDaoFactory {

@@ -16,7 +16,7 @@ public class User extends Entity {
 	private String firstName;
 
 	private Timestamp createdDate;
-	private Timestamp udatedDate;
+	private Timestamp updatedDate;
 
 	private boolean isBanned;
 
@@ -43,21 +43,21 @@ public class User extends Entity {
 	}
 
 	public User(int id, Role role, String login, String password, String email, String lastName, String firstName,
-				Timestamp createdDate, Timestamp udatedDate, boolean isBanned) {
+				Timestamp createdDate, Timestamp updatedDate, boolean isBanned) {
 
 		this(id, role, login, password, email, createdDate);
 		this.lastName = lastName;
 		this.firstName = firstName;
-		this.udatedDate = udatedDate;
+		this.updatedDate = updatedDate;
 		this.isBanned = isBanned;
 	}
 
 	public User(int id, Role role, String login, String password, String email, String lastName, String firstName,
-				Timestamp createdDate, Timestamp udatedDate, boolean isBanned, List<Post> publishedPosts,
+				Timestamp createdDate, Timestamp updatedDate, boolean isBanned, List<Post> publishedPosts,
 				List<Post> readedPosts, List<FavoritePost> favoritePosts, List<Tag> favoriteTags) {
 
 		this(id, role, login, password, email, lastName, firstName,
-				createdDate, udatedDate, isBanned);
+				createdDate, updatedDate, isBanned);
 		this.publishedPosts = publishedPosts;
 		this.readedPosts = readedPosts;
 		this.favoritePosts = favoritePosts;
@@ -120,12 +120,12 @@ public class User extends Entity {
 		this.createdDate = createdDate;
 	}
 
-	public Timestamp getUdatedDate() {
-		return udatedDate;
+	public Timestamp getUpdatedDate() {
+		return updatedDate;
 	}
 
-	public void setUdatedDate(Timestamp udatedDate) {
-		this.udatedDate = udatedDate;
+	public void setUpdatedDate(Timestamp updatedDate) {
+		this.updatedDate = updatedDate;
 	}
 
 	public boolean isBanned() {
@@ -208,7 +208,7 @@ public class User extends Entity {
 		if (createdDate != null ? !createdDate.equals(user.createdDate) : user.createdDate != null) {
 			return false;
 		}
-		if (udatedDate != null ? !udatedDate.equals(user.udatedDate) : user.udatedDate != null) {
+		if (updatedDate != null ? !updatedDate.equals(user.updatedDate) : user.updatedDate != null) {
 			return false;
 		}
 		if (publishedPosts != null ? !publishedPosts.equals(user.publishedPosts) : user.publishedPosts != null) {
@@ -234,7 +234,7 @@ public class User extends Entity {
 		result = 31 * result + (lastName != null ? lastName.hashCode() : 0);
 		result = 31 * result + (firstName != null ? firstName.hashCode() : 0);
 		result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
-		result = 31 * result + (udatedDate != null ? udatedDate.hashCode() : 0);
+		result = 31 * result + (updatedDate != null ? updatedDate.hashCode() : 0);
 		result = 31 * result + (isBanned ? 1 : 0);
 		result = 31 * result + (publishedPosts != null ? publishedPosts.hashCode() : 0);
 		result = 31 * result + (readedPosts != null ? readedPosts.hashCode() : 0);
@@ -253,7 +253,7 @@ public class User extends Entity {
 				", lastName='" + lastName + '\'' +
 				", firstName='" + firstName + '\'' +
 				", createdDate='" + createdDate + '\'' +
-				", udatedDate='" + udatedDate + '\'' +
+				", updatedDate='" + updatedDate + '\'' +
 				", isBanned=" + isBanned +
 				", publishedPosts=" + publishedPosts +
 				", readedPosts=" + readedPosts +

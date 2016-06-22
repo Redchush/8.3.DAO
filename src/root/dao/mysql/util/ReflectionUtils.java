@@ -35,12 +35,12 @@ public class ReflectionUtils {
 
     public static boolean isClassMaintainInterface (Object classToCheck, Class infTocCheck) {
         Class[] inf = classToCheck.getClass().getInterfaces();
-        boolean isBannable = false;
+        boolean isMaintain = false;
         for (Class cl : inf) {
             if (cl.equals(Bannable.class)) {
-                isBannable = true;
+                isMaintain = true;
             }
         }
-        return isBannable;
+        return isMaintain;
     }
 }

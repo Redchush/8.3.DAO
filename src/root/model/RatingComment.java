@@ -1,8 +1,5 @@
 package root.model;
 
-/**
- * Created by user on 19.06.2016.
- */
 public class RatingComment extends Entity {
 
     private String comment;
@@ -50,6 +47,14 @@ public class RatingComment extends Entity {
 
     public void setBanned(boolean banned) {
         isBanned = banned;
+    }
+
+    public Rating getParent() {
+        return parent;
+    }
+
+    public void setParent(Rating parent) {
+        this.parent = parent;
     }
 
     @Override

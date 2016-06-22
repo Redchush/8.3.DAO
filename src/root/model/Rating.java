@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Rating extends Entity{
 
-    private Answer parentAnswer;
+    private Answer parent;
     private User author;
     private int rating;
 
@@ -26,10 +26,10 @@ public class Rating extends Entity{
         ratingComments = new ArrayList<>();
     }
 
-    public Rating(int id, Answer parentAnswer, User author, int rating, Timestamp createdDate,
+    public Rating(int id, Answer parent, User author, int rating, Timestamp createdDate,
                   Timestamp updatedDate, boolean isBanned) {
         super(id);
-        this.parentAnswer = parentAnswer;
+        this.parent = parent;
         this.author = author;
         this.rating = rating;
         this.createdDate = createdDate;
@@ -37,9 +37,9 @@ public class Rating extends Entity{
         this.isBanned = isBanned;
     }
 
-    public Rating(int id, Answer parentAnswer, User author, int rating, Timestamp createdDate,
-                  Timestamp updatedDate,  boolean isBanned, List<RatingComment> ratingComment) {
-        this(id, parentAnswer, author, rating, createdDate, updatedDate, isBanned);
+    public Rating(int id, Answer parent, User author, int rating, Timestamp createdDate,
+                  Timestamp updatedDate, boolean isBanned, List<RatingComment> ratingComment) {
+        this(id, parent, author, rating, createdDate, updatedDate, isBanned);
         this.ratingComments = ratingComment;
     }
 
@@ -52,12 +52,12 @@ public class Rating extends Entity{
         this.author = author;
     }
 
-    public Answer getParentAnswer() {
-        return parentAnswer;
+    public Answer getParent() {
+        return parent;
     }
 
-    public void setParentAnswer(Answer parentAnswer) {
-        this.parentAnswer = parentAnswer;
+    public void setParent(Answer parent) {
+        this.parent = parent;
     }
 
     public int getRating() {
@@ -123,7 +123,7 @@ public class Rating extends Entity{
         if (author != null ? !author.equals(rating1.author) : rating1.author != null) {
             return false;
         }
-        if (parentAnswer != null ? !parentAnswer.equals(rating1.parentAnswer) : rating1.parentAnswer != null) {
+        if (parent != null ? !parent.equals(rating1.parent) : rating1.parent != null) {
             return false;
         }
         if (createdDate != null ? !createdDate.equals(rating1.createdDate) : rating1.createdDate != null) {
@@ -140,7 +140,7 @@ public class Rating extends Entity{
     public int hashCode() {
         int result = super.hashCode();
         result = 31 * result + (author != null ? author.hashCode() : 0);
-        result = 31 * result + (parentAnswer != null ? parentAnswer.hashCode() : 0);
+        result = 31 * result + (parent != null ? parent.hashCode() : 0);
         result = 31 * result + rating;
         result = 31 * result + (createdDate != null ? createdDate.hashCode() : 0);
         result = 31 * result + (updatedDate != null ? updatedDate.hashCode() : 0);
@@ -152,7 +152,7 @@ public class Rating extends Entity{
     @Override
     public String toString() {
         return "Rating{" +
-                "parentAnswer=" + parentAnswer +
+                "parent=" + parent +
                 ", author=" + author +
                 ", rating=" + rating +
                 ", createdDate=" + createdDate +

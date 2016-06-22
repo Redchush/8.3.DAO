@@ -1,10 +1,8 @@
 package root.dao.mysql.impl;
 
-import root.dao.AbstractDao;
 import root.dao.AnswerDao;
 import root.dao.exception.DaoException;
 import root.dao.mysql.Bannable;
-import root.dao.mysql.util.QueryMaker;
 import root.model.Answer;
 import root.model.Post;
 import root.model.User;
@@ -53,8 +51,9 @@ public class AnswerDaoMySql extends AbstractDaoMySql<Answer> implements AnswerDa
     }
 
 
- /*    public Answer(int id, User author, Post parent, String content, Timestamp createdDate,
- *        Timestamp updatedDate, boolean banned)
+ /*
+ * use constructor public Answer(int id, User author, Post parent, String content, Timestamp createdDate,
+ *                   Timestamp updatedDate, boolean banned)
  */
     @Override
     protected List<Answer> createEntityList(ResultSet set) throws DaoException {

@@ -3,7 +3,6 @@ package root.dao.mysql.impl;
 import root.dao.CategoryDao;
 import root.dao.exception.DaoException;
 import root.dao.mysql.Bannable;
-import root.model.Answer;
 import root.model.Category;
 
 import java.sql.*;
@@ -48,18 +47,10 @@ public class CategoryDaoMySql extends AbstractDaoMySql<Category>
 
     @Override
     public Category update(Category entity) throws DaoException {
-        return null;
+        return super.update(entity);
     }
 
-    @Override
-    protected Category createSimpleEntity(ResultSet set) throws DaoException {
-        List<Category> entities =  createEntityList(set);
-        Category entity = null;
-        if (entities.size() == 1) {
-            entity = createEntityList(set).get(0);
-        }
-        return entity;
-    }
+
     /*
     *   use constuctor  public Category(int id, String title, String description,
     *                Timestamp createdDate, Category parent,

@@ -5,6 +5,7 @@ import root.dao.exception.DaoException;
 import root.model.Role;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -16,8 +17,7 @@ import java.util.List;
 public class RoleDaoMySql extends AbstractDaoMySql<Role>
         implements RoleDao {
 
-    public RoleDaoMySql() {
-    }
+    public RoleDaoMySql() {}
 
     public RoleDaoMySql(Connection connection) {
         super(connection);
@@ -49,14 +49,8 @@ public class RoleDaoMySql extends AbstractDaoMySql<Role>
     }
 
     @Override
-    public Role update(Role entity) {
-        return null;
-    }
-
-    @Override
-    protected Role createSimpleEntity(ResultSet set) throws DaoException {
-        Role role =  createEntityList(set).get(0);
-        return role;
+    public Role update(Role entity) throws DaoException {
+        return super.update(entity);
     }
 
     @Override
@@ -75,4 +69,24 @@ public class RoleDaoMySql extends AbstractDaoMySql<Role>
         }
         return entities;
     }
+
+    @Override
+    protected Role updateDbRecord(Role entity, String query) throws DaoException {
+        ResultSet set = null;
+        PreparedStatement statement = null;
+        try {
+            statement = connection.prepareStatement(query);
+            String name = entity.getName();
+            statement.setString(1, name);
+            set = statement.executeQuery();
+        } catch (SQLException e) {
+            throw new DaoException("Can't execute update by query " + query + " and entitry " + entity);
+        } finally {
+            close(statement);
+        }
+        return entity;
+    }
 }
+
+//roles.1 = id
+//        roles.2 = name

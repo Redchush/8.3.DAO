@@ -3,7 +3,6 @@ package root.dao.mysql.impl;
 import root.dao.PostDao;
 import root.dao.exception.DaoException;
 import root.dao.mysql.Bannable;
-import root.model.Answer;
 import root.model.Category;
 import root.model.Post;
 import root.model.User;
@@ -49,16 +48,9 @@ public class PostDaoMySql extends AbstractDaoMySql<Post>
     }
 
     @Override
-    public Post update(Post entity) {
-        return null;
+    public Post update(Post entity) throws DaoException {
+        return super.update(entity);
     }
-
-    @Override
-    protected Post createSimpleEntity(ResultSet set) throws DaoException {
-        Post entity = createEntityList(set).get(0);
-        return entity;
-    }
-
     /*
     * public Post(int id, User author, Category parent, String title,
     *            String content, Timestamp createdDate, Timestamp updatedDate, boolean banned)
@@ -97,7 +89,6 @@ public class PostDaoMySql extends AbstractDaoMySql<Post>
         PreparedStatement statement = null;
         try {
             statement = connection.prepareStatement(query);
-
 
             int user_id = entity.getAuthor().getId();
             statement.setInt(1, user_id);

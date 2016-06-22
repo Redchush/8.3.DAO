@@ -3,7 +3,9 @@ package root.dao.mysql.impl;
 import root.dao.CommentDao;
 import root.dao.exception.DaoException;
 import root.dao.mysql.Bannable;
-import root.model.*;
+import root.model.Answer;
+import root.model.Comment;
+import root.model.User;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -46,14 +48,8 @@ public class CommentDaoMySql extends AbstractDaoMySql<Comment>
     }
 
     @Override
-    public Comment update(Comment entity) {
-        return null;
-    }
-
-    @Override
-    protected Comment createSimpleEntity(ResultSet set) throws DaoException {
-        Comment comment = createEntityList(set).get(0);
-        return comment;
+    public Comment update(Comment entity) throws DaoException {
+        return super.update(entity);
     }
 
     @Override

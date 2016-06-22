@@ -15,7 +15,7 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 
 public class UserDaoMySqlTest {
@@ -60,14 +60,12 @@ public class UserDaoMySqlTest {
         List<User> users = dao.findAll();
         User user = users.get(0);
         root.dao.mysql.util.ResourceManager.PARTS.getString("delete.user");
-
     }
 
     @Test
     public void deleteByUserTest() {
         // delete.userByBan
         int id = userTested.getId();
-
     }
 
     @Test

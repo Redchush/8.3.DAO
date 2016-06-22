@@ -4,7 +4,6 @@ import root.dao.exception.DaoException;
 import root.model.Entity;
 
 import java.sql.Connection;
-import java.sql.Statement;
 import java.util.List;
 
 /**

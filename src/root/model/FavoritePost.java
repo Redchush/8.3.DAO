@@ -6,9 +6,9 @@ import java.util.List;
 
 public class FavoritePost extends Entity {
 
-    private String favoritePostComment;
+    private String comment;
     private Post relatedPost;
-    private User user;
+    private User author;
     private int id;
 
     public FavoritePost() {}
@@ -17,11 +17,11 @@ public class FavoritePost extends Entity {
         super(id);
     }
 
-    public FavoritePost( int id, User user, Post relatedPost, String favoritePostComment) {
+    public FavoritePost(int id, User author, Post relatedPost, String comment) {
         super(id);
-        this.favoritePostComment = favoritePostComment;
+        this.comment = comment;
         this.relatedPost = relatedPost;
-        this.user = user;
+        this.author = author;
     }
 
     @Override
@@ -29,12 +29,12 @@ public class FavoritePost extends Entity {
         return id;
     }
 
-    public String getFavoritePostComment() {
-        return favoritePostComment;
+    public String getComment() {
+        return comment;
     }
 
-    public void setFavoritePostComment(String favoritePostComment) {
-        this.favoritePostComment = favoritePostComment;
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 
     public Post getRelatedPost() {
@@ -45,12 +45,12 @@ public class FavoritePost extends Entity {
         this.relatedPost = relatedPost;
     }
 
-    public User getUser() {
-        return user;
+    public User getAuthor() {
+        return author;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setAuthor(User author) {
+        this.author = author;
     }
 
     /*properties of post is read-only */
@@ -60,7 +60,7 @@ public class FavoritePost extends Entity {
     }
 
     public User getPostUser() {
-        return user;
+        return author;
     }
 
     public Category getPostParent() {
@@ -112,23 +112,23 @@ public class FavoritePost extends Entity {
         if (id != post.id) {
             return false;
         }
-        if (favoritePostComment != null ? !favoritePostComment.equals(post.favoritePostComment)
-                                        : post.favoritePostComment != null) {
+        if (comment != null ? !comment.equals(post.comment)
+                            : post.comment != null) {
             return false;
         }
         if (relatedPost != null ? !relatedPost.equals(post.relatedPost) : post.relatedPost != null) {
             return false;
         }
-        return user != null ? user.equals(post.user) : post.user == null;
+        return author != null ? author.equals(post.author) : post.author == null;
 
     }
 
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + (favoritePostComment != null ? favoritePostComment.hashCode() : 0);
+        result = 31 * result + (comment != null ? comment.hashCode() : 0);
         result = 31 * result + (relatedPost != null ? relatedPost.hashCode() : 0);
-        result = 31 * result + (user != null ? user.hashCode() : 0);
+        result = 31 * result + (author != null ? author.hashCode() : 0);
         result = 31 * result + id;
         return result;
     }
@@ -136,9 +136,9 @@ public class FavoritePost extends Entity {
     @Override
     public String toString() {
         return "FavoritePost{" +
-                "favoritePostComment='" + favoritePostComment + '\'' +
+                "comment='" + comment + '\'' +
                 ", relatedPost=" + relatedPost +
-                ", user=" + user +
+                ", author=" + author +
                 ", id=" + id +
                 '}';
     }

@@ -7,6 +7,7 @@ import root.model.Rating;
 import root.model.RatingComment;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -49,14 +50,8 @@ public class RatingCommentDaoMySql extends AbstractDaoMySql<RatingComment>
     }
 
     @Override
-    public RatingComment update(RatingComment entity) {
-        return null;
-    }
-
-    @Override
-    protected RatingComment createSimpleEntity(ResultSet set) throws DaoException {
-        RatingComment comment = createEntityList(set).get(0);
-        return comment;
+    public RatingComment update(RatingComment entity) throws DaoException {
+        return super.update(entity);
     }
 
     @Override
@@ -81,6 +76,35 @@ public class RatingCommentDaoMySql extends AbstractDaoMySql<RatingComment>
         }
         return entities;
     }
+
+    @Override
+    protected RatingComment updateDbRecord(RatingComment entity, String query) throws DaoException {
+        ResultSet set = null;
+        PreparedStatement statement = null;
+        try {
+            statement = connection.prepareStatement(query);
+
+            int answers_rating_id = entity.getParent().getId();
+            statement.setInt(1, answers_rating_id);
+
+            boolean type = entity.isPositive();
+            statement.setBoolean(2, type);
+
+            String comment = entity.getComment();
+            statement.setString(3, comment);
+
+            boolean idBanned = entity.isBanned();
+            statement.setBoolean(4, idBanned);
+
+            set = statement.executeQuery();
+        } catch (SQLException e) {
+            throw new DaoException("Can't execute update by query " + query + " and entitry " + entity);
+        } finally {
+            close(statement);
+        }
+        return entity;
+    }
+
 }
 //answer_property.num =4
 //        answer_property.1 = id
