@@ -2,10 +2,7 @@ package root.dao.mysql.util;
 
 
 import root.dao.AbstractDao;
-import root.dao.mysql.impl.TagDaoMySql;
-import root.dao.mysql.impl.UserDaoMySql;
-import root.model.Tag;
-import root.model.User;
+import root.model.Entity;
 
 import static root.dao.mysql.util.ResourceData.*;
 import static root.dao.mysql.util.ResourceManager.*;
@@ -13,37 +10,59 @@ import static root.dao.mysql.util.ResourceManager.*;
 
 public class QueryMaker {
 
-    public static final String SELECT = "SELECT ";
-    public static final String DELETE = "DELETE ";
-    public static final String UPDATE = "UPDATE ";
-    public static final String CREATE = "CREATE ";
+    private static final String SELECT = "SELECT ";
+    private static final String DELETE = "DELETE ";
+    private static final String UPDATE = "UPDATE ";
+    private static final String CREATE = "CREATE ";
+    private static final String SET = "\nSET ";
+    private static final String DEFAULT = "DEFAULT";
 
-    public static String getSelectQueryAll(Object dao){
+    public static <T extends Entity> String getSelectQueryAll(AbstractDao<T>  dao){
         Class clazz = dao.getClass();
         Class  modelClass = getModelClassFromGeneric(clazz);
         String key = PR_SELECT + OPT_FULL + getClassPrefix(modelClass);
-        String query = PARTS.getString(key);
-        return query;
+        return PARTS.getString(key);
     }
 
-    public static String getSelectQueryById(Object dao) {
+    public static <T extends Entity>  String getSelectQueryById(AbstractDao<T> dao) {
         String queryAll = getSelectQueryAll(dao);
-        String result = queryAll + PARTS.getString("append.byId");
-        return result;
+        return queryAll + PARTS.getString("append.byId");
     }
 
-    public static String getDeleteQueryById(Object dao){
+    public static  <T extends Entity> String getDeleteQueryById(AbstractDao<T> dao){
         Class clazz = dao.getClass();
-        String result = DELETE+ getReferencedTable(clazz, true) +
-                " " + PARTS.getString("append.byId");
-        return result;
+        StringBuilder result = new StringBuilder(DELETE);
+        result.append(getReferencedTable(clazz, true))
+              .append(" ")
+              .append(PARTS.getString("append.byId"));
+        return result.toString();
     }
 
-    public static String getDeleteByBan(Object dao){
+    public static  <T extends Entity> String getDeleteByBan(AbstractDao<T> dao){
         Class clazz = dao.getClass();
-        String result = DELETE + getReferencedTable(clazz, true) +
-                " " + PARTS.getString("append.setBanned");
-        return result;
+        StringBuilder result = new StringBuilder(DELETE);
+        result.append(getReferencedTable(clazz, true))
+              .append(" ")
+              .append(PARTS.getString("append.setBanned"));
+        return result.toString();
+    }
+
+
+    public static <T extends Entity> String getUpdate(AbstractDao<T> dao) {
+        Class clazz = dao.getClass();
+
+        String tableName = getReferencedTable(clazz, false);
+        int attrCount = getAttrCount(tableName);
+        String fieldsString = getAllFieldsString(tableName, attrCount);
+        String setPartOfQuery = getSetPartOfQuery(fieldsString);
+
+        StringBuilder query = new StringBuilder(UPDATE);
+        query.append(fieldsString)
+             .append(SET)
+             .append(setPartOfQuery)
+             .append("\n")
+             .append(PARTS.getString("append.byId"));
+        return query.toString();
     }
 
     private static String getReferencedTable(Class clazz, boolean full){
@@ -57,17 +76,47 @@ public class QueryMaker {
         return ReflectionUtils.getGenericParameterClass(clazz, 0);
     }
 
-    private static String getAllFieldsString(Class clazz){
-        String keyPart = getReferencedTable(clazz, false);
-        String columnCount = STRUCTURE.getString(keyPart  +"." + OPT_COL_NUBERS);
-        int count = Integer.parseInt(columnCount);
-        StringBuilder result = new StringBuilder();
-        for (int i = OPT_START_COL_INDEX; i <= count; i++) {
-            String value = STRUCTURE.getString(keyPart +"." + i);
-            System.out.println(value);
-        }
-        return keyPart;
+    private static int getAttrCount(String tableName){
+        String columnCount = STRUCTURE.getString(tableName  +"." + OPT_COL_NUBERS);
+        return Integer.parseInt(columnCount);
     }
 
-   
+    private static String getSetPartOfQuery(String fieldEnum){
+        String replacement = " = ?, ";
+        String lastReplacement = " = ?";
+        return fieldEnum.replaceAll(",", replacement)
+                        .replaceFirst("\\?" , DEFAULT)
+                                    + lastReplacement;
+    }
+
+    private static String getAllFieldsString(String tableName, int attrCount){
+        StringBuilder result = new StringBuilder();
+        for (int i = OPT_START_COL_INDEX; i <= attrCount; i++) {
+            String value = STRUCTURE.getString(tableName +"." + i);
+            result.append(value).append(", ");
+        }
+        result.deleteCharAt(result.length() - 2);
+        return result.toString();
+    }
+
+  /*  public static void main(String[] args) {
+        try {
+            AbstractDao<User> dao = new UserDaoMySql();
+            String query = getDeleteQueryById(dao);
+            System.out.println(query);
+        } finally {}
+        try {
+             AbstractDao<User> dao = new UserDaoMySql();
+             User user = new User();
+             String string = getUpdate(dao);
+            System.out.println(string);
+        } finally {}
+        try {
+            AbstractDao<Answer> dao = new AnswerDaoMySql();
+            Answer user = new Answer();
+            String string = getUpdate(dao);
+            System.out.println(string);
+        } finally {}
+    }*/
+
 }
