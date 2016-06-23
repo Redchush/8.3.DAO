@@ -59,7 +59,7 @@ public class RatingCommentDaoMySql extends AbstractDaoMySql<RatingComment>
         List<RatingComment> entities = new ArrayList<>();
         while (set.next()) {
             int id = set.getInt(1);
-            int ratingId = set.getInt("answers_rating_id");
+            int ratingId = set.getInt("rating_id");
             Rating rating = new Rating(ratingId);
 
             String comment = set.getString("comment");
@@ -76,8 +76,8 @@ public class RatingCommentDaoMySql extends AbstractDaoMySql<RatingComment>
     protected void fillStatementWithFullAttributesSet(PreparedStatement statement, RatingComment entity, int from)
             throws SQLException {
 
-        int answers_rating_id = entity.getParent().getId();
-        statement.setInt(1, answers_rating_id);
+        int rating_id = entity.getParent().getId();
+        statement.setInt(1, rating_id);
 
         boolean type = entity.isPositive();
         statement.setBoolean(2, type);
@@ -89,9 +89,10 @@ public class RatingCommentDaoMySql extends AbstractDaoMySql<RatingComment>
         statement.setBoolean(4, idBanned);
     }
 }
-//answer_property.num =4
-//        answer_property.1 = id
-//        answer_property.2 = answers_rating_id
-//        answer_property.3 = type
-//        answer_property.4 = comment
-//        answer_property.5 = banned
+//
+//        rating_comment.num =4
+//        rating_comment.1 = id
+//        rating_comment.2 = rating_id
+//        rating_comment.3 = type
+//        rating_comment.4 = comment
+//        rating_comment.5 = banned

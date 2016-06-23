@@ -63,7 +63,6 @@ public class TagDaoMySql extends AbstractDaoMySql<Tag>
         return entities;
     }
 
-
     @Override
     protected void fillStatementWithFullAttributesSet(PreparedStatement statement, Tag entity, int from)
             throws SQLException {
@@ -71,3 +70,7 @@ public class TagDaoMySql extends AbstractDaoMySql<Tag>
         statement.setString(1, name);
     }
 }
+
+//        tags.num = 2
+//        tags.1 = id
+//        tags.2 = name

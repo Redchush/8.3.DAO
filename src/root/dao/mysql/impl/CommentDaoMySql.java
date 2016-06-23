@@ -62,7 +62,7 @@ public class CommentDaoMySql extends AbstractDaoMySql<Comment>
             int parentPostId = set.getInt("post_id");
             Answer parentAnswer = new Answer(parentPostId);
 
-            String content = set.getString("message");
+            String content = set.getString("content");
             Timestamp createdDate = set.getTimestamp("created_date");
             Timestamp updatedDate = set.getTimestamp("updated_date");
             boolean isBanned = set.getBoolean("banned");
@@ -76,27 +76,30 @@ public class CommentDaoMySql extends AbstractDaoMySql<Comment>
     @Override
     protected void fillStatementWithFullAttributesSet(PreparedStatement statement, Comment entity, int from) throws
                                                                                                     SQLException {
+        int user_id = entity.getAuthor().getId();
+        statement.setInt(1, user_id);
 
         int answers_id = entity.getParent().getId();
-        statement.setInt(1, answers_id);
-        int user_id = entity.getAuthor().getId();
-        statement.setInt(2, user_id);
+        statement.setInt(2, answers_id);
+        String content = entity.getContent();
+        statement.setString(3, content);
+
         Timestamp created_date = entity.getCreatedDate();
-        statement.setTimestamp(3, created_date);
+        statement.setTimestamp(4, created_date);
         Timestamp updated_date = entity.getUpdatedDate();
-        statement.setTimestamp(4, updated_date);
-        String message = entity.getContent();
-        statement.setString(5, message);
+        statement.setTimestamp(5, updated_date);
+
         boolean isBanned = entity.isBanned();
         statement.setBoolean(6, isBanned);
 
     }
 }
-//comments.num = 7
+//
+//        comments.num = 7
 //        comments.1 = id
-//        comments.2 = answers_id -> 1
-//        comments.3 = user_id -> 2
-//        comments.4 = created_date ->3
-//        comments.5 = updated_date -> 4
-//        comments.6 = message ->5
-//        comments.7 = banned ->6
+//        comments.2 = user_id
+//        comments.3 = answers_id
+//        comments.4 = content
+//        comments.5 = created_date
+//        comments.6 = updated_date
+//        comments.7 = banned

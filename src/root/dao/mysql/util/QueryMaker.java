@@ -35,17 +35,19 @@ public class QueryMaker {
         Class clazz = dao.getClass();
         StringBuilder result = new StringBuilder(DELETE);
         result.append(getReferencedTable(clazz, true))
-              .append(" ")
+              .append("\n")
               .append(PARTS.getString("append.byId"));
         return result.toString();
     }
 
     public static  <T extends Entity> String getDeleteByBan(AbstractDao<T> dao){
         Class clazz = dao.getClass();
-        StringBuilder result = new StringBuilder(DELETE);
+        StringBuilder result = new StringBuilder(UPDATE);
         result.append(getReferencedTable(clazz, true))
-              .append(" ")
-              .append(PARTS.getString("append.setBanned"));
+              .append("\n")
+              .append(PARTS.getString("append.setBanned"))
+              .append("\n")
+              .append(PARTS.getString("append.byId"));
         return result.toString();
     }
 

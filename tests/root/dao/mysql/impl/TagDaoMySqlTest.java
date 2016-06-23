@@ -1,8 +1,6 @@
 package root.dao.mysql.impl;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import root.connection_pool.ConnectionPool;
 import root.connection_pool.exception.ConnectionPoolException;
 import root.dao.AbstractDao;
@@ -11,29 +9,40 @@ import root.dao.mysql.MySqlDaoFactory;
 import root.model.Tag;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
 public class TagDaoMySqlTest {
-    private static Tag tagTested;
+
     private static Connection connection;
     private static AbstractDao dao;
-    private static Tag tagToCreate;
     private static int initialSizeOftable = 7;
+
+    private Tag tagToCreate;
+    private Tag tagTested;
+
+
 
     @BeforeClass
     public static void login() throws ConnectionPoolException, DaoException {
         connection = ConnectionPool.getInstanse().takeConnection();
         dao =  MySqlDaoFactory.getInstance().getDaoByClass(Tag.class, connection);
+    }
 
+    @Before
+    public void setUp() throws Exception {
         tagTested = new Tag(1, "java");
         tagToCreate = new Tag();
         tagToCreate.setName("testedTag");
-     }
+    }
 
+    @After
+    public void tearDown() throws Exception {
 
+    }
 
     @Test
     public void findEntityById() throws ConnectionPoolException, DaoException, SQLException {
@@ -47,7 +56,6 @@ public class TagDaoMySqlTest {
         assertEquals(tags.size(), initialSizeOftable);
     }
 
-
     @Test
     public void deleteTestById() throws DaoException {
         int id = tagTested.getId();
@@ -60,22 +68,24 @@ public class TagDaoMySqlTest {
     }
 
     @Test
-    public void deleteByUserTest() {
+    public void delete() {
 
     }
 
     @Test
-    public void createTest() throws DaoException {
-       showTableState();
-       dao.create(tagTested);
-       showTableState();
+    public void createTest() throws DaoException, SQLException {
+        String undoQuery = "DELETE FROM `like_it`.`tags` WHERE `id` = '?'";
+        PreparedStatement statement = connection.prepareStatement(undoQuery);
+        connection.commit();
+        showTableState();
+        boolean f = dao.create(tagToCreate);
+        showTableState();
+        System.out.println(f);
     }
 
     @Test
     public void update() {
-
         Tag entity;
-
     }
 
     @AfterClass

@@ -81,13 +81,15 @@ public class RatingDaoMySql extends AbstractDaoMySql<Rating>
     @Override
     protected void fillStatementWithFullAttributesSet(PreparedStatement statement, Rating entity, int from)
             throws SQLException {
-        int answer_id = entity.getParent().getId();
-        statement.setInt(1, answer_id);
+
         int user_id = entity.getAuthor().getId();
-        statement.setInt(2, user_id);
+        statement.setInt(1, user_id);
+
+        int answer_id = entity.getParent().getId();
+        statement.setInt(2, answer_id);
 
         int rating = entity.getRating();
-        statement.setInt(4, rating);
+        statement.setInt(3, rating);
 
         Timestamp created_date = entity.getCreatedDate();
         statement.setTimestamp(4, created_date);
@@ -99,11 +101,13 @@ public class RatingDaoMySql extends AbstractDaoMySql<Rating>
     }
 }
 
-//answer_rating.num = 7
-//        answer_rating.1 = id
-//        answer_rating.2 = answer_id
-//        answer_rating.3 = user_id
-//        answer_rating.4 = raiting
-//        answer_rating.5 = created_date
-//        answer_rating.6 = updated_date
-//        answer_rating.7 = banned
+//
+//        rating.num = 7
+//        rating.1 = id
+//        rating.2 = user_id
+//        rating.3 = answer_id
+//        rating.4 = raiting
+//        rating.5 = created_date
+//        rating.6 = updated_date
+//        rating.7 = banned
+

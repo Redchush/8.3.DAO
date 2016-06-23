@@ -78,43 +78,38 @@ public class UserDaoMySql extends AbstractDaoMySql<User>
     protected void fillStatementWithFullAttributesSet(PreparedStatement statement, User entity, int from)
             throws SQLException {
 
-        String login = entity.getLogin();
-        statement.setString(1, login);
-        String password = entity.getPassword();
-        statement.setString(2, password);
-
-        String email = entity.getEmail();
-        statement.setString(3, email);
-
         int role_id = entity.getRole().getId();
-        statement.setInt(4, role_id);
+        statement.setInt(1, role_id);
+
+        String login = entity.getLogin();
+        statement.setString(2, login);
+        String password = entity.getPassword();
+        statement.setString(3, password);
+        String email = entity.getEmail();
+        statement.setString(4, email);
 
         String lastName = entity.getLastName();
         statement.setString(5, lastName);
-
-        boolean isBanned = entity.isBanned();
-        statement.setBoolean(6, isBanned);
-
         String firstName = entity.getFirstName();
-        statement.setString(7, firstName);
+        statement.setString(6, firstName);
 
         Timestamp created_date = entity.getCreatedDate();
-        statement.setTimestamp(8, created_date);
-
+        statement.setTimestamp(7, created_date);
         Timestamp updated_date = entity.getUpdatedDate();
-        statement.setTimestamp(9, updated_date);
+        statement.setTimestamp(8, updated_date);
 
+        boolean isBanned = entity.isBanned();
+        statement.setBoolean(9, isBanned);
     }
 }
-//users.num = 10
+//         users.num = 10
 //        users.1 = id
-//        users.2 = login
-//        users.3 = password
-//        users.4 = email
-//        users.5 = role_id
+//        users.2 = role_id
+//        users.3 = login
+//        users.4 = password
+//        users.5 = email
 //        users.6= last_name
-//        users.7 = banned
-//        users.8 =  first_name
-//        users.9 =  created_date
-//        users.10 = updated_date
-
+//        users.7 = first_name
+//        users.8 =  created_date
+//        users.9 =  updated_date
+//        users.10 = banned

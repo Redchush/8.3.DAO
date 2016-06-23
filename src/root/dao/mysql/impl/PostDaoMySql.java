@@ -90,26 +90,29 @@ public class PostDaoMySql extends AbstractDaoMySql<Post>
         String title = entity.getTitle();
         statement.setString(3, title);
 
-        String message = entity.getContent();
-        statement.setString(4, message);
-
-        boolean isBanned = entity.isBanned();
-        statement.setBoolean(5, isBanned);
+        String content = entity.getContent();
+        statement.setString(4, content);
 
         Timestamp created_date = entity.getCreatedDate();
-        statement.setTimestamp(6, created_date);
+        statement.setTimestamp(5, created_date);
 
         Timestamp updated_date = entity.getUpdatedDate();
-        statement.setTimestamp(7, updated_date);
+        statement.setTimestamp(6, updated_date);
+
+        boolean isBanned = entity.isBanned();
+        statement.setBoolean(7, isBanned);
+
     }
 }
 
-//  posts.num = 8
-//  posts.1 = id
-//  posts.2 = user_id
-//  posts.3 = category_id
-//  posts.4 = title
-//  posts.5 = content
-//  posts.6 = banned
-//  posts.7 = created_date
-//  posts.8 = updated_date
+//
+//        posts.num = 8
+//        posts.1 = id
+//        posts.2 = user_id
+//        posts.3 = category_id
+//        posts.4 = title
+//        posts.5 = content
+//        posts.6 = created_date
+//        posts.7 = updated_date
+//        posts.8 = banned
+

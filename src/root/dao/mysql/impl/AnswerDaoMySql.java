@@ -63,11 +63,10 @@ public class AnswerDaoMySql extends AbstractDaoMySql<Answer> implements AnswerDa
              int id = set.getInt(1);
              int parentUserId = set.getInt("user_id");
              User parentUser = new User(parentUserId);
-
              int postId = set.getInt("post_id");
              Post parentPost = new Post(postId);
 
-             String content = set.getString("message");
+             String content = set.getString("content");
              Timestamp createdDate = set.getTimestamp("created_date");
              Timestamp updatedDate = set.getTimestamp("updated_date");
              boolean isBanned = set.getBoolean("banned");
@@ -81,16 +80,16 @@ public class AnswerDaoMySql extends AbstractDaoMySql<Answer> implements AnswerDa
     @Override
     protected void fillStatementWithFullAttributesSet(PreparedStatement statement, Answer entity, int from)
                                                      throws SQLException {
-        int post_id = entity.getParent().getId();
-        statement.setInt(1, post_id);
         int user_id = entity.getAuthor().getId();
-        statement.setInt(2, user_id);
+        statement.setInt(1, user_id);
+        int post_id = entity.getParent().getId();
+        statement.setInt(2, post_id);
 
-        String message = entity.getContent();
-        statement.setString(3, message);
+        String content = entity.getContent();
+        statement.setString(3, content);
+
         Timestamp created_date = entity.getCreatedDate();
         statement.setTimestamp(4, created_date);
-
         Timestamp updated_date = entity.getUpdatedDate();
         statement.setTimestamp(5, updated_date);
 
@@ -100,11 +99,12 @@ public class AnswerDaoMySql extends AbstractDaoMySql<Answer> implements AnswerDa
     }
 }
 
-//
-//         answers.1 = id
-//        answers.2 = post_id - >1
-//        answers.3 = user_id -> 2
-//        answers.4 = message -> 3
-//        answers.5 = created_date ->4
-//        answers.6 = updated_date -> 5
-//        answers.7 = banned - > 6
+//answers.num = 7
+//        answers.1 = id
+//        answers.2 = user_id
+//        answers.3 = post_id
+//        answers.4 = content
+//        answers.5 = created_date
+//        answers.6 = updated_date
+//        answers.7 = banned
+

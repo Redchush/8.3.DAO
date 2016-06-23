@@ -92,10 +92,11 @@ public class CategoryDaoMySql extends AbstractDaoMySql<Category>
         statement.setBoolean(5, published);
     }
 }
-//  categories.num = 6;
-//  categories.1 = id
-//  categories.2 = title - 1
-//  categories.3 = created_date - 2
-//  categories.4 = description - 3
-//  categories.5 = parent_category - 4
-//  categories.6 = published - 5
+//
+//        categories.num = 6;
+//        categories.1 = id
+//        categories.2 = title
+//        categories.3 = created_date
+//        categories.4 = description
+//        categories.5 = parent_category
+//        categories.6 = published

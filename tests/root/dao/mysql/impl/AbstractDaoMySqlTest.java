@@ -51,76 +51,13 @@ public class AbstractDaoMySqlTest {
     }
 
     @Test
-    public void getConnection() throws Exception {
-
-    }
-
-    @Test
-    public void setConnection() throws Exception {
-
-    }
-
-    @Test
     public void findAll() throws Exception {
         List<User> users = dao.findAll();
         User user = users.get(0);
         assertEquals(userTested, user);
     }
 
-    @Test
-    public void findEntityById() throws Exception {
 
-    }
-
-    @Test
-    public void delete() throws Exception {
-
-    }
-
-    @Test
-    public void delete1() throws Exception {
-
-    }
-
-    @Test
-    public void create() throws Exception {
-
-    }
-
-    @Test
-    public void update() throws Exception {
-
-    }
-
-    @Test
-    public void close() throws Exception {
-
-    }
-
-    @Test
-    public void createSimpleEntity() throws Exception {
-
-    }
-
-    @Test
-    public void createEntityList() throws Exception {
-
-    }
-
-    @Test
-    public void updateDbRecord() throws Exception {
-
-    }
-
-    @Test
-    public void close1() throws Exception {
-
-    }
-
-    @Test
-    public void close2() throws Exception {
-
-    }
     @Test
     public void fillLastParameterWithId() throws SQLException {
         String querty = " UPDATE id, login, password, email, role_id, last_name, banned, first_name, created_date, " +
