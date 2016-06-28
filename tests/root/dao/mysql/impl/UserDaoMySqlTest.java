@@ -18,6 +18,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 public class UserDaoMySqlTest {
@@ -59,9 +60,8 @@ public class UserDaoMySqlTest {
     @Test
     public void deleteTestById() throws DaoException {
         int id = 1;
-        List<User> users = dao.findAll();
-        User user = users.get(0);
-        root.dao.mysql.util.ResourceManager.PARTS.getString("delete.user");
+        boolean isDelated = dao.delete(id);
+        assertTrue(isDelated);
     }
 
     @Test
@@ -90,3 +90,5 @@ public class UserDaoMySqlTest {
         connection.close();
     }
 }
+
+

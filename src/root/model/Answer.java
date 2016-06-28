@@ -39,17 +39,14 @@ public class Answer extends Entity {
         this.isBanned = banned;
     }
 
-
     public Answer(int id, User author, Post parent, String content, Timestamp createdDate,
                   Timestamp updatedDate, boolean banned, List<Comment> comments) {
-
         this(id, author, parent, content, createdDate,updatedDate, banned);
         this.comments = comments;
     }
 
     public Answer(int id, User author, Post parent, String title, String content, Timestamp createdDate,
                   Timestamp updatedDate, boolean isBanned,  List<Comment> comments, Rating rating) {
-
         this(id, author, parent, content, createdDate, updatedDate, isBanned, comments);
         this.rating = rating;
     }

@@ -1,19 +1,22 @@
 package root.dao.mysql.impl;
 
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import root.connection_pool.ConnectionPool;
 import root.connection_pool.exception.ConnectionPoolException;
 import root.dao.AbstractDao;
 import root.dao.exception.DaoException;
 import root.dao.mysql.MySqlDaoFactory;
+import root.dao.mysql.impl.helper.DBRestorer;
 import root.model.Tag;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class TagDaoMySqlTest {
 
@@ -24,24 +27,17 @@ public class TagDaoMySqlTest {
     private Tag tagToCreate;
     private Tag tagTested;
 
-
-
     @BeforeClass
-    public static void login() throws ConnectionPoolException, DaoException {
+    public static void login() throws ConnectionPoolException, DaoException, SQLException {
         connection = ConnectionPool.getInstanse().takeConnection();
         dao =  MySqlDaoFactory.getInstance().getDaoByClass(Tag.class, connection);
     }
 
     @Before
     public void setUp() throws Exception {
+        DBRestorer.truncateAll(connection);
+        DBRestorer.restoreAll(connection);
         tagTested = new Tag(1, "java");
-        tagToCreate = new Tag();
-        tagToCreate.setName("testedTag");
-    }
-
-    @After
-    public void tearDown() throws Exception {
-
     }
 
     @Test
@@ -55,46 +51,56 @@ public class TagDaoMySqlTest {
         List<Tag> tags = dao.findAll();
         assertEquals(tags.size(), initialSizeOftable);
     }
-
     @Test
-    public void deleteTestById() throws DaoException {
+    public void deleteTestById() throws DaoException, SQLException {
         int id = tagTested.getId();
         boolean boo = dao.delete(id);
-        List<Tag> tags = dao.findAll();
-        assertEquals(tags.size(), initialSizeOftable - 1);
-        System.out.println(boo);
-        showTableState();
-
-    }
-
-    @Test
-    public void delete() {
-
+        assertTrue(boo);
+        // showTableState();
     }
 
     @Test
     public void createTest() throws DaoException, SQLException {
-        String undoQuery = "DELETE FROM `like_it`.`tags` WHERE `id` = '?'";
-        PreparedStatement statement = connection.prepareStatement(undoQuery);
-        connection.commit();
-        showTableState();
+        Tag tagExpected = new Tag(10, "testedTag");
+        tagToCreate = new Tag();
+        tagToCreate.setName("testedTag");
         boolean f = dao.create(tagToCreate);
-        showTableState();
-        System.out.println(f);
+        Tag tagActual = (Tag) dao.findEntityById(10);
+        assertEquals(tagExpected, tagActual);
     }
 
     @Test
-    public void update() {
-        Tag entity;
+    public void update() throws DaoException {
+        Tag tagExpected = new Tag(1, "testedTag");
+        dao.update(tagExpected);
+        Tag tagActual = (Tag)  dao.findEntityById(1);
+        assertEquals(tagExpected, tagActual);
     }
 
     @AfterClass
     public static void logOut() throws SQLException {
         connection.close();
     }
-    public void showTableState() throws DaoException {
-        List<Tag> tags = dao.findAll();
-        System.out.println(tags);
+
+//    @Test
+//    public void reset(){ }
+
+    public void showTableState() {
+        String query = "SELECT id, NAME  FROM tags";
+        try (Statement statement = connection.createStatement();
+             ResultSet set = statement.executeQuery(query)) {
+            ResultSetMetaData meta = set.getMetaData();
+            while (set.next()) {
+                int length = meta.getColumnCount();
+                System.out.print("{");
+                for (int i = 1; i <= length; i++) {
+                    System.out.print( set.getObject(i) + " ");
+                }
+                System.out.print("}");
+            }
+        } catch (SQLException e) {
+            System.err.println("exception in show table" );
+        }
     }
 
 }

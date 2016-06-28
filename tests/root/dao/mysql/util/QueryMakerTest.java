@@ -39,18 +39,28 @@ public class QueryMakerTest {
 
     @Test
     public void getSelectQueryById() throws Exception {
-
+        String queryActual = QueryMaker.getDeleteById(tagDao);
+        System.out.println(queryActual);
     }
 
     @Test
     public void getDeleteByBan() throws Exception {
         String queryExp = "UPDATE like_it.users\nset banned = true\nwhere id = ?";
         String queryActual = QueryMaker.getDeleteByBan(userDao);
-        assertEquals(queryActual.trim(), queryExp);
+        boolean isEqual = queryActual.equalsIgnoreCase(queryExp);
+        assertTrue(isEqual);
     }
 
     @Test
     public void getUpdate() throws Exception {
+        String queryActualTag = QueryMaker.getUpdate(tagDao);
+        System.out.println(queryActualTag);
+        String queryExpTag = "UPDATE like_it.tags\n" +
+        "SET  name = ?\n" +
+        "WHERE id = ?";
+        assertEquals(queryExpTag, queryActualTag);
+
+
         String queryActual = QueryMaker.getUpdate(userDao);
         PreparedStatement statement = connection.prepareStatement(queryActual);
         ParameterMetaData metaData = statement.getParameterMetaData();
@@ -77,7 +87,7 @@ public class QueryMakerTest {
         int countActual = metaData.getParameterCount();
         int countExpected = Integer.parseInt(ResourceManager.STRUCTURE.getString("users.num")) - 1;
         assertEquals(countExpected, countActual);
-        System.out.println(query);
+      //  System.out.println(query);
 
         String queryTag = QueryMaker.getCreate(tagDao);
         PreparedStatement statementTag = connection.prepareStatement(queryTag);
@@ -85,6 +95,6 @@ public class QueryMakerTest {
         int countActualTags = metaData.getParameterCount();
         int countExpectedTags = Integer.parseInt(ResourceManager.STRUCTURE.getString("users.num")) - 1;
         assertEquals(countActualTags, countExpectedTags);
-        System.out.println(queryTag);
+      //  System.out.println(queryTag);
     }
 }

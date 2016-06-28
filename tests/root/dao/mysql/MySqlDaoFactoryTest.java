@@ -9,10 +9,9 @@ import root.model.User;
 
 import java.sql.Connection;
 
-/**
- * Created by user on 22.06.2016.
- */
+
 public class MySqlDaoFactoryTest {
+
     @Test
     public void getInstance() throws Exception {
         Connection connection = ConnectionPool.getInstanse().takeConnection();
@@ -21,10 +20,4 @@ public class MySqlDaoFactoryTest {
         Assert.assertEquals(dao.getClass(), expected);
         connection.close();
     }
-
-    @Test
-    public void getDaoByClass() throws Exception {
-
-    }
-
 }
