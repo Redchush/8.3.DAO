@@ -27,7 +27,7 @@ public class QueryMakerTest {
     private static AbstractDao tagDao;
     @BeforeClass
     public static void login() throws ConnectionPoolException, DaoException {
-        connection = ConnectionPool.getInstanse().takeConnection();
+        connection = ConnectionPool.getInstance().takeConnection();
         userDao =  MySqlDaoFactory.getInstance().getDaoByClass(User.class, connection);
         tagDao = MySqlDaoFactory.getInstance().getDaoByClass(Tag.class, connection);
     }

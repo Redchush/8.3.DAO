@@ -14,7 +14,7 @@ public class MySqlDaoFactoryTest {
 
     @Test
     public void getInstance() throws Exception {
-        Connection connection = ConnectionPool.getInstanse().takeConnection();
+        Connection connection = ConnectionPool.getInstance().takeConnection();
         AbstractDao dao =  MySqlDaoFactory.getInstance().getDaoByClass(User.class, connection);
         Class expected = UserDaoMySql.class;
         Assert.assertEquals(dao.getClass(), expected);

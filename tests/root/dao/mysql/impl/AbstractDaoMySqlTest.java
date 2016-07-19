@@ -37,7 +37,7 @@ public class AbstractDaoMySqlTest {
 
     @BeforeClass
     public static void login() throws ConnectionPoolException, DaoException {
-        connectionExpected = ConnectionPool.getInstanse().takeConnection();
+        connectionExpected = ConnectionPool.getInstance().takeConnection();
         dao = MySqlDaoFactory.getInstance().getDaoByClass(User.class, connectionExpected);
         daoTestedProtected = new AbstractDaoTestedProtected(connectionExpected);
         int id = 1;
@@ -74,7 +74,7 @@ public class AbstractDaoMySqlTest {
         Connection newConnection = null;
         for ( AbstractDaoMySql daoMySql : instanseList) {
             try {
-                newConnection = ConnectionPool.getInstanse().takeConnection() ;
+                newConnection = ConnectionPool.getInstance().takeConnection() ;
                 daoMySql.setConnection(newConnection);
                 Connection actual = daoMySql.getConnection();
                 assertEquals(newConnection, actual);
@@ -94,11 +94,11 @@ public class AbstractDaoMySqlTest {
 
     @Test
     public void fillLastParameterWithId() throws SQLException {
-        String querty = " UPDATE id, login, password, email, role_id, last_name, banned, first_name, created_date, " +
+        String query = " UPDATE id, login, password, email, role_id, last_name, banned, first_name, created_date, " +
                 "updated_date  SET " +
                 "id = DEFAULT,  login = ?,  password = ?,  email = ?,  role_id = ?,  last_name = ?,  banned = ?,  " +
                 "first_name = ?,  created_date = ?,  updated_date  = ?  where id = ? ";
-        PreparedStatement statement = connectionExpected.prepareStatement(querty);
+        PreparedStatement statement = connectionExpected.prepareStatement(query);
         daoTestedProtected.fillLastParameterWithId(statement, userTested);
         assertTrue(statement.toString().contains("where id = 1"));
      }

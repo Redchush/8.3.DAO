@@ -29,7 +29,7 @@ public class UserDaoMySqlTest {
 
     @BeforeClass
     public static void login() throws ConnectionPoolException, DaoException {
-        connection = ConnectionPool.getInstanse().takeConnection();
+        connection = ConnectionPool.getInstance().takeConnection();
         dao =  MySqlDaoFactory.getInstance().getDaoByClass(User.class, connection);
         int id = 1;
         String login = "lara";

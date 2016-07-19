@@ -1,7 +1,6 @@
 package root.dao.mysql.impl;
 
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import root.connection_pool.ConnectionPool;
@@ -21,24 +20,33 @@ import static org.junit.Assert.assertTrue;
 public class TagDaoMySqlTest {
 
     private static Connection connection;
+    private static ConnectionPool pool;
     private static AbstractDao dao;
     private static int initialSizeOftable = 7;
 
     private Tag tagToCreate;
-    private Tag tagTested;
+    private static Tag tagTested;
 
     @BeforeClass
     public static void login() throws ConnectionPoolException, DaoException, SQLException {
-        connection = ConnectionPool.getInstanse().takeConnection();
+        pool = ConnectionPool.getInstance();
+        connection = pool.takeConnection();
         dao =  MySqlDaoFactory.getInstance().getDaoByClass(Tag.class, connection);
-    }
-
-    @Before
-    public void setUp() throws Exception {
         DBRestorer.truncateAll(connection);
         DBRestorer.restoreAll(connection);
         tagTested = new Tag(1, "java");
     }
+
+    @AfterClass
+    public static void logOut() throws SQLException {
+        connection.close();
+        pool.dispose();
+    }
+
+//    @Before
+//    public void setUp() throws Exception {
+//
+//    }
 
     @Test
     public void findEntityById() throws ConnectionPoolException, DaoException, SQLException {
@@ -77,10 +85,7 @@ public class TagDaoMySqlTest {
         assertEquals(tagExpected, tagActual);
     }
 
-    @AfterClass
-    public static void logOut() throws SQLException {
-        connection.close();
-    }
+
 
 //    @Test
 //    public void reset(){ }
@@ -88,7 +93,7 @@ public class TagDaoMySqlTest {
     public void showTableState() {
         String query = "SELECT id, NAME  FROM tags";
         try (Statement statement = connection.createStatement();
-             ResultSet set = statement.executeQuery(query)) {
+            ResultSet set = statement.executeQuery(query)) {
             ResultSetMetaData meta = set.getMetaData();
             while (set.next()) {
                 int length = meta.getColumnCount();
