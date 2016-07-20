@@ -101,6 +101,11 @@ public class UserDaoMySql extends AbstractDaoMySql<User>
         boolean isBanned = entity.isBanned();
         statement.setBoolean(9, isBanned);
     }
+
+    @Override
+    protected Class<User> getGenericType() {
+        return User.class;
+    }
 }
 //         users.num = 10
 //        users.1 = id

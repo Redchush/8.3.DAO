@@ -97,6 +97,11 @@ public class AnswerDaoMySql extends AbstractDaoMySql<Answer> implements AnswerDa
         statement.setBoolean(6, isBanned);
 
     }
+
+    @Override
+    protected Class<Answer> getGenericType() {
+        return Answer.class;
+    }
 }
 
 //answers.num = 7

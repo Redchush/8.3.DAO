@@ -22,12 +22,9 @@ public class MySqlDaoFactory {
         daoMap.put(Comment.class, new CommentDaoMySql());
         daoMap.put(FavoritePost.class, new FavoritePostDaoMySql());
         daoMap.put(Post.class, new PostDaoMySql());
-        daoMap.put(RatingComment.class, new RoleDaoMySql());
-        daoMap.put(Rating.class, new RatingCommentDaoMySql());
         daoMap.put(Role.class, new RoleDaoMySql());
         daoMap.put(Tag.class, new TagDaoMySql());
         daoMap.put(User.class, new UserDaoMySql());
-
     }
 
     private MySqlDaoFactory(){

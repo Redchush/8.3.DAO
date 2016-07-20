@@ -93,6 +93,11 @@ public class CommentDaoMySql extends AbstractDaoMySql<Comment>
         statement.setBoolean(6, isBanned);
 
     }
+
+    @Override
+    protected Class<Comment> getGenericType() {
+        return Comment.class;
+    }
 }
 //
 //        comments.num = 7

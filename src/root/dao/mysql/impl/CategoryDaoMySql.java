@@ -91,6 +91,11 @@ public class CategoryDaoMySql extends AbstractDaoMySql<Category>
         boolean published = entity.isPublished();
         statement.setBoolean(5, published);
     }
+
+    @Override
+    protected Class<Category> getGenericType() {
+        return Category.class;
+    }
 }
 //
 //        categories.num = 6;

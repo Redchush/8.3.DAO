@@ -71,6 +71,11 @@ public class RoleDaoMySql extends AbstractDaoMySql<Role>
         String name = entity.getName();
         statement.setString(1, name);
     }
+
+    @Override
+    protected Class<Role> getGenericType() {
+        return Role.class;
+    }
 }
 
 //roles.1 = id

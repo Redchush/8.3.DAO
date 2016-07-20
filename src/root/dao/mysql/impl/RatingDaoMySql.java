@@ -99,6 +99,11 @@ public class RatingDaoMySql extends AbstractDaoMySql<Rating>
         boolean isBanned = entity.isBanned();
         statement.setBoolean(6, isBanned);
     }
+
+    @Override
+    protected Class<Rating> getGenericType() {
+        return Rating.class;
+    }
 }
 
 //

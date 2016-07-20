@@ -76,6 +76,11 @@ public class FavoritePostDaoMySql extends AbstractDaoMySql<FavoritePost> impleme
         String comment = entity.getComment();
         statement.setString(3, comment);
     }
+
+    @Override
+    protected Class<FavoritePost> getGenericType() {
+        return FavoritePost.class;
+    }
 }
 //favorite_users_posts.num = 4
 //        favorite_users_posts.1 = id

@@ -1,5 +1,8 @@
 package root.connection_pool;
 
+import commonUtil.ClassName;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import root.connection_pool.exception.ConnectionPoolException;
 
 import java.sql.Connection;
@@ -12,31 +15,38 @@ import static root.connection_pool.util.ResourceManager.DATABASE;
 
 final class ConnectionPoolDefinition {
 
-    private String url;
-    private String driver;
-    private String user;
-    private String password;
-    private int poolSize;
+    private final String url;
+    private final String driver;
+    private final String user;
+    private final String password;
+
+    private final int poolSize;
+    private final int defaultPoolSize =5;
 
     private static ConnectionPoolDefinition instance;
 
+    private static Logger logger = LogManager.getLogger(ClassName.getClassName());
+
     private ConnectionPoolDefinition() throws ConnectionPoolException {
+        int tempPoolSize;
         url = DATABASE.getString(DB_URL);
         user =  DATABASE.getString(DB_USER);
         password =  DATABASE.getString(DB_PASSWORD);
         try{
             String size = DATABASE.getString(DB_POOL_SIZE);
-            poolSize = Integer.parseInt(size);
+            tempPoolSize = Integer.parseInt(size);
         } catch (NumberFormatException e){
-            poolSize = getDefaultPoolSize(); 
+            tempPoolSize = defaultPoolSize;
         }
+        poolSize = tempPoolSize;
         driver =  DATABASE.getString(DB_DRIVER);
         try {
             Class.forName(driver);
         } catch (ClassNotFoundException e) {
             throw new ConnectionPoolException("Can't load the driver by path " + driver, e);
         }
-    }     
+        logger.info("Definitor created " + this);
+    }
    
     protected static ConnectionPoolDefinition getInstance() throws ConnectionPoolException {
         if (instance == null){
@@ -45,48 +55,24 @@ final class ConnectionPoolDefinition {
         return instance;
     }
 
-    protected String getUrl() {
+    public String getUrl() {
         return url;
     }
 
-    protected void setUrl(String url) {
-        this.url = url;
-    }
-
-    protected String getDriver() {
+    public String getDriver() {
         return driver;
     }
 
-    protected void setDriver(String driver) {
-        this.driver = driver;
-    }
-
-    protected String getUser() {
+    public String getUser() {
         return user;
     }
 
-    protected void setUser(String user) {
-        this.user = user;
-    }
-
-    protected String getPassword() {
+    public String getPassword() {
         return password;
     }
 
-    protected void setPassword(String password) {
-        this.password = password;
-    }
-
-    protected int getPoolSize() {
+    public int getPoolSize() {
         return poolSize;
-    }
-
-    protected void setPoolSize(int poolSize) {
-        this.poolSize = poolSize;
-    }
-
-    private int getDefaultPoolSize(){
-        return 5; 
     }
 
     public Connection getConnection() throws ConnectionPoolException {
@@ -94,9 +80,22 @@ final class ConnectionPoolDefinition {
         try {
             connection = DriverManager.getConnection(url,user, password);
         } catch (SQLException e) {
-            throw new ConnectionPoolException("ConnectionPoolDefinition can't create connection with " +
-            "url = " + url + ", user = " + user + ", password = " + password, e);
+            logger.error("ConnectionPoolDefinition can't create connection with " +
+                    "url = " + url + ", user = " + user + ", password = " + password, e);
+            throw new ConnectionPoolException("ConnectionPoolDefinition can't create connection with this data");
         }
         return connection;
+    }
+
+    @Override
+    public String toString() {
+        return "ConnectionPoolDefinition{" +
+                "url='" + url + '\'' +
+                ", driver='" + driver + '\'' +
+                ", user='" + user + '\'' +
+                ", password='" + password + '\'' +
+                ", poolSize=" + poolSize +
+                ", defaultPoolSize=" + defaultPoolSize +
+                '}';
     }
 }

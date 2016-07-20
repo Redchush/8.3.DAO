@@ -20,15 +20,19 @@ import static root.dao.mysql.util.ResourceManager.DB;
 
 public class DBRestorer {
 
-    public static void restoreAll(Connection connection) throws SQLException {
-        System.out.println("1");
-        String url = DATABASE.getString(DB_URL);
-        String user =  DATABASE.getString(DB_USER);
-        String password =  DATABASE.getString(DB_PASSWORD);
-        Connection connection1 = DriverManager.getConnection(url, user, password);
+    public static void restoreAll(Connection con) throws SQLException {
+        Connection connection = con;
+        if (con == null){
+            String url = DATABASE.getString(DB_URL);
+            String user =  DATABASE.getString(DB_USER);
+            String password =  DATABASE.getString(DB_PASSWORD);
+            Connection connection1 = DriverManager.getConnection(url, user, password);
+            connection = connection1;
+        }
+
 
         Statement stmt = null;
-        ScriptRunner sr = new ScriptRunner(connection1);
+        ScriptRunner sr = new ScriptRunner(connection);
         try {
            sr.setLogWriter(null);
            Reader reader = new BufferedReader(
@@ -37,12 +41,11 @@ public class DBRestorer {
         } catch (Exception e) {
             System.err.println("Failed to Execute"
                     + " The error is ");
-        } finally {
-            connection1.close();
         }
     }
 
     public static void truncateAll(Connection connection) throws SQLException {
+
         List<Class> modelClasses = ReflectionHelper.findAllSublasses(Entity.class);
         Statement statement = connection.createStatement();
         for (Class t : modelClasses){
@@ -51,8 +54,10 @@ public class DBRestorer {
             String tableName =  ResourceManager.STRUCTURE.getString("clazz." + simple);
             String fullName = DB.getString("database.name") + "." + tableName;
             deleteQuery = deleteQuery + tableName;
+            String queryAlter = String.format("ALTER TABLE %s AUTO_INCREMENT = 1", fullName);
             if (!simple.equals("Role")) {
                 statement.executeUpdate(deleteQuery);
+                statement.executeUpdate(queryAlter);
             }
             connection.commit();
         }
@@ -67,6 +72,7 @@ public class DBRestorer {
         connection1.setAutoCommit(false);
         try{
             truncateAll(connection1);
+            restoreAll(connection1);
         } finally {
             connection1.close();
         }
@@ -74,3 +80,4 @@ public class DBRestorer {
     }
 }
 
+//LAST_INSERT_ID()	Value of the AUTOINCREMENT column for the last INSERT

@@ -103,6 +103,11 @@ public class PostDaoMySql extends AbstractDaoMySql<Post>
         statement.setBoolean(7, isBanned);
 
     }
+
+    @Override
+    protected Class<Post> getGenericType() {
+        return Post.class;
+    }
 }
 
 //

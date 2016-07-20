@@ -69,6 +69,11 @@ public class TagDaoMySql extends AbstractDaoMySql<Tag>
         String name = entity.getName();
         statement.setString(1, name);
     }
+
+    @Override
+    protected Class<Tag> getGenericType() {
+        return Tag.class;
+    }
 }
 
 //        tags.num = 2
